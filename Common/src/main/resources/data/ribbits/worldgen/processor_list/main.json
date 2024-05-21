@@ -10,6 +10,9 @@
       "processor_type": "ribbits:lapis_block_processor"
     },
     {
+      "processor_type": "ribbits:brewing_stand_processor"
+    },
+    {
       "processor_type": "ribbits:pillar_processor",
       "target_block": {
         "Name": "minecraft:end_stone"
