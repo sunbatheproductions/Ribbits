@@ -40,6 +40,8 @@ public class RibbitsCommon {
                 output.accept(BlockModule.MOSSY_OAK_PLANKS.getFenceGate());
                 output.accept(BlockModule.MOSSY_OAK_DOOR.get());
 
+                output.accept(ItemModule.MARACA.get());
+
                 output.accept(ItemModule.RIBBIT_NITWIT_SPAWN_EGG.get());
                 output.accept(ItemModule.RIBBIT_FISHERMAN_SPAWN_EGG.get());
                 output.accept(ItemModule.RIBBIT_GARDENER_SPAWN_EGG.get());

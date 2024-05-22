@@ -1,6 +1,7 @@
 package com.yungnickyoung.minecraft.ribbits.module;
 
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
+import com.yungnickyoung.minecraft.ribbits.item.MaracaItem;
 import com.yungnickyoung.minecraft.ribbits.item.RibbitSpawnEggItem;
 import com.yungnickyoung.minecraft.yungsapi.api.autoregister.AutoRegister;
 import com.yungnickyoung.minecraft.yungsapi.api.autoregister.AutoRegisterItem;
@@ -27,6 +28,9 @@ public class ItemModule {
 
     @AutoRegister("ribbit_sorcerer_spawn_egg")
     public static final AutoRegisterItem RIBBIT_SORCERER_SPAWN_EGG = AutoRegisterItem.of(() -> new RibbitSpawnEggItem(EntityTypeModule.RIBBIT.get(), RibbitProfessionModule.SORCERER, 0xb3c35b, 0x774d7e, new Item.Properties()));
+
+    @AutoRegister("maraca")
+    public static final AutoRegisterItem MARACA = AutoRegisterItem.of(() -> new MaracaItem(new Item.Properties().stacksTo(1)));
 
     @AutoRegister("_ignored")
     public static void registerCompostables() {

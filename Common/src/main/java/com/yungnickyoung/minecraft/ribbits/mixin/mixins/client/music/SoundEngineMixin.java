@@ -1,4 +1,4 @@
-package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client;
+package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.music;
 
 import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.mixin.interfaces.client.IChannelDuck;
