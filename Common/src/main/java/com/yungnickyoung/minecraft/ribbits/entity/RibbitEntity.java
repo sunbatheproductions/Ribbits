@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.player.Player;
@@ -113,8 +114,9 @@ public class RibbitEntity extends AgeableMob implements GeoEntity {
         super.registerGoals();
         this.goalSelector.addGoal(0, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(2, new RandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.5D));
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
     }
 
     @Override
@@ -219,13 +221,13 @@ public class RibbitEntity extends AgeableMob implements GeoEntity {
         this.goalSelector.removeGoal(this.applyBuffGoal);
 
         if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.NITWIT)) {
-            this.goalSelector.addGoal(3, this.musicGoal);
+            this.goalSelector.addGoal(4, this.musicGoal);
         } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
-            this.goalSelector.addGoal(3, this.waterCropsGoal);
+            this.goalSelector.addGoal(4, this.waterCropsGoal);
         } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
-            this.goalSelector.addGoal(3, this.fishGoal);
+            this.goalSelector.addGoal(4, this.fishGoal);
         } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER)) {
-            this.goalSelector.addGoal(3, this.applyBuffGoal);
+            this.goalSelector.addGoal(4, this.applyBuffGoal);
         }
     }
 
@@ -417,17 +419,17 @@ public class RibbitEntity extends AgeableMob implements GeoEntity {
 
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> state) {
         if (this.getUmbrellaFalling()) {
-            state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
+            state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.PRIDE) ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
         } else if (getPlayingInstrument() && this.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
             state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
         } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
+            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.PRIDE)) {
                 state.getController().setAnimation(WALK_HOLDING_2);
             } else {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_1 : WALK);
             }
           } else {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
+            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.PRIDE)) {
                 state.getController().setAnimation(IDLE_HOLDING_2);
             } else {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_1 : IDLE);
