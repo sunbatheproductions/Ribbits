@@ -8,11 +8,9 @@
   ],
   "client": [
     "client.accessor.SoundBufferAccessor",
-    "client.maraca.HumanoidModelMixin",
     "client.maraca.ItemInHandRendererMixin",
     "client.maraca.ItemRendererMixin",
     "client.maraca.ModelBakeryMixin",
-    "client.maraca.PlayerRendererMixin",
     "client.music.ChannelMixin",
     "client.music.SoundEngineMixin",
     "client.music.SoundManagerMixin"
