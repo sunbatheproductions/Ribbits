@@ -20,7 +20,7 @@ public class MaracaItem extends Item {
 
     @Override
     public UseAnim getUseAnimation(ItemStack $$0) {
-        return UseAnim.BOW;
+        return UseAnim.BRUSH;
     }
 
     @Override
