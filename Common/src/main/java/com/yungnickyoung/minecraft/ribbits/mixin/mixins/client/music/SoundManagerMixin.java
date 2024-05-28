@@ -16,4 +16,9 @@ public class SoundManagerMixin implements ISoundManagerDuck {
     public void ribbits$stopRibbitsMusic(int ribbitEntityId) {
         ((ISoundEngineDuck) this.soundEngine).ribbits$stopRibbitsMusic(ribbitEntityId);
     }
+
+    @Override
+    public void ribbits$stopMaraca(int playerId) {
+        ((ISoundEngineDuck) this.soundEngine).ribbits$stopMaraca(playerId);
+    }
 }

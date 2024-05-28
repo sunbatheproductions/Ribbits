@@ -42,5 +42,9 @@ public interface IPlatformHelper {
 
     void onPlayerExitBandRange(ServerPlayer player, ServerLevel serverLevel, RibbitEntity masterRibbit);
 
+    void startHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember);
+
+    void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember);
+
     Supplier<Block> getGiantLilyPadBlock();
 }

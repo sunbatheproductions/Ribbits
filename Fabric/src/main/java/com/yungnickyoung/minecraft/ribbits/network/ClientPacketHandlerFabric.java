@@ -1,17 +1,21 @@
 package com.yungnickyoung.minecraft.ribbits.network;
 
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
+import com.yungnickyoung.minecraft.ribbits.client.sound.PlayerInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.mixin.interfaces.client.ISoundManagerDuck;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
+import com.yungnickyoung.minecraft.ribbits.module.SoundModule;
 import com.yungnickyoung.minecraft.ribbits.util.BufferUtils;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 
@@ -82,6 +86,46 @@ public class ClientPacketHandlerFabric {
 
         client.execute(() -> {
             ((ISoundManagerDuck) Minecraft.getInstance().getSoundManager()).ribbits$stopRibbitsMusic(entityId);
+        });
+    }
+
+    public static void receiveStartMaraca(Minecraft client,
+                                          ClientPacketListener clientPacketListener,
+                                          FriendlyByteBuf buf,
+                                          PacketSender responseSender) {
+        int performerId = buf.readInt();
+        Entity performer = client.level.getEntity(performerId);
+
+        if (performer == null) {
+            RibbitsCommon.LOGGER.error("Received Start Maraca packet for Player performer with id {} that doesn't exist!", performerId);
+            return;
+        } else if (!(performer instanceof Player)) {
+            RibbitsCommon.LOGGER.error("Received Start Maraca packet for non-Player performer with id {}!", performerId);
+            return;
+        }
+
+        client.execute(() -> {
+            Minecraft.getInstance().getSoundManager().play(new PlayerInstrumentSoundInstance((Player) performer, -1, SoundModule.MUSIC_MARACA.get()));
+        });
+    }
+
+    public static void receiveStopMaraca(Minecraft client,
+                                         ClientPacketListener clientPacketListener,
+                                         FriendlyByteBuf buf,
+                                         PacketSender responseSender) {
+        int performerId = buf.readInt();
+        Entity performer = client.level.getEntity(performerId);
+
+        if (performer == null) {
+            RibbitsCommon.LOGGER.error("Received Stop Maraca packet for Player performer with id {} that doesn't exist!", performerId);
+            return;
+        } else if (!(performer instanceof Player)) {
+            RibbitsCommon.LOGGER.error("Received Stop Maraca packet for non-Player performer with id {}!", performerId);
+            return;
+        }
+
+        client.execute(() -> {
+            ((ISoundManagerDuck) Minecraft.getInstance().getSoundManager()).ribbits$stopMaraca(performerId);
         });
     }
 }

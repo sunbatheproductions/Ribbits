@@ -7,25 +7,25 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class RibbitMusicStopSingleS2CPacket {
-    private final int ribbitId;
+public class PlayerMusicStopS2CPacket {
+    private final int performerId;
 
-    public RibbitMusicStopSingleS2CPacket(int ribbitId) {
-        this.ribbitId = ribbitId;
+    public PlayerMusicStopS2CPacket(int performerId) {
+        this.performerId = performerId;
     }
 
     /**
      * Decoder
      */
-    public RibbitMusicStopSingleS2CPacket(FriendlyByteBuf buf) {
-        this.ribbitId = buf.readInt();
+    public PlayerMusicStopS2CPacket(FriendlyByteBuf buf) {
+        this.performerId = buf.readInt();
     }
 
     /**
      * Encoder
      */
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(this.ribbitId);
+        buf.writeInt(this.performerId);
     }
 
     /**
@@ -34,13 +34,13 @@ public class RibbitMusicStopSingleS2CPacket {
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() ->
                 // Make sure this is only executed on the physical client
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlerForge.handleStopSingleRibbitInstrument(this, ctx))
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlerForge.handleStopPlayerInstrument(this, ctx))
         );
         ctx.get().setPacketHandled(true);
         return true;
     }
 
-    public int getRibbitId() {
-        return this.ribbitId;
+    public int getPerformerId() {
+        return this.performerId;
     }
 }

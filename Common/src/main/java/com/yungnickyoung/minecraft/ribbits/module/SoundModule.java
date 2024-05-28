@@ -31,7 +31,7 @@ public class SoundModule {
     @AutoRegister("music.ribbit.guitar")
     public static final AutoRegisterSoundEvent MUSIC_RIBBIT_GUITAR = AutoRegisterSoundEvent.create();
 
-    @AutoRegister("music.ribbit.maracas")
-    public static final AutoRegisterSoundEvent MUSIC_RIBBIT_MARACAS = AutoRegisterSoundEvent.create();
+    @AutoRegister("music.ribbit.maraca")
+    public static final AutoRegisterSoundEvent MUSIC_MARACA = AutoRegisterSoundEvent.create();
 
 }

@@ -1,6 +1,8 @@
 package com.yungnickyoung.minecraft.ribbits.module;
 
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
+import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStartS2CPacket;
+import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStopS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartAllS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartSingleS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStopSingleS2CPacket;
@@ -54,6 +56,18 @@ public class NetworkModuleForge {
                     .decoder(RibbitMusicStopSingleS2CPacket::new)
                     .encoder(RibbitMusicStopSingleS2CPacket::toBytes)
                     .consumerMainThread(RibbitMusicStopSingleS2CPacket::handle)
+                    .add();
+
+            INSTANCE.messageBuilder(PlayerMusicStartS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                    .decoder(PlayerMusicStartS2CPacket::new)
+                    .encoder(PlayerMusicStartS2CPacket::toBytes)
+                    .consumerMainThread(PlayerMusicStartS2CPacket::handle)
+                    .add();
+
+            INSTANCE.messageBuilder(PlayerMusicStopS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                    .decoder(PlayerMusicStopS2CPacket::new)
+                    .encoder(PlayerMusicStopS2CPacket::toBytes)
+                    .consumerMainThread(PlayerMusicStopS2CPacket::handle)
                     .add();
         });
     }

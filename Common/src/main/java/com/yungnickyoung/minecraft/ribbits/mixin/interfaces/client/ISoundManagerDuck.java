@@ -8,4 +8,5 @@ import com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.music.SoundManage
  */
 public interface ISoundManagerDuck {
     void ribbits$stopRibbitsMusic(int ribbitEntityId);
+    void ribbits$stopMaraca(int playerId);
 }

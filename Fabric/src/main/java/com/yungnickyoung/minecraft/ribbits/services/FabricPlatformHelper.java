@@ -77,6 +77,20 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public void startHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        buf.writeInt(performer.getId());
+        ServerPlayNetworking.send(audienceMember, NetworkModuleFabric.START_HEARING_MARACA, buf);
+    }
+
+    @Override
+    public void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        buf.writeInt(performer.getId());
+        ServerPlayNetworking.send(audienceMember, NetworkModuleFabric.STOP_HEARING_MARACA, buf);
+    }
+
+    @Override
     public Supplier<Block> getGiantLilyPadBlock() {
         return () -> new GiantLilyPadBlock(
                 BlockBehaviour.Properties

@@ -2,8 +2,8 @@ package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.music;
 
 import com.mojang.blaze3d.audio.Channel;
 import com.mojang.blaze3d.audio.SoundBuffer;
+import com.yungnickyoung.minecraft.ribbits.client.sound.InstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.mixin.interfaces.client.IChannelDuck;
-import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.accessor.SoundBufferAccessor;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import org.lwjgl.BufferUtils;
@@ -46,7 +46,7 @@ public class ChannelMixin implements IChannelDuck {
         byteOffset.rewind();
         AL11.alSourceiv(this.source, AL11.AL_BYTE_OFFSET, byteOffset);
 
-        if (instance instanceof RibbitInstrumentSoundInstance ribbitInstrumentSoundInstance) {
+        if (instance instanceof InstrumentSoundInstance<?> ribbitInstrumentSoundInstance) {
             ribbitInstrumentSoundInstance.setSourceId(this.source);
         }
     }
@@ -78,7 +78,7 @@ public class ChannelMixin implements IChannelDuck {
         sampleOffset.rewind();
         AL11.alSourceiv(this.source, AL11.AL_SAMPLE_OFFSET, sampleOffset);
 
-        if (instance instanceof RibbitInstrumentSoundInstance ribbitInstrumentSoundInstance) {
+        if (instance instanceof InstrumentSoundInstance<?> ribbitInstrumentSoundInstance) {
             ribbitInstrumentSoundInstance.setSourceId(this.source);
         }
     }

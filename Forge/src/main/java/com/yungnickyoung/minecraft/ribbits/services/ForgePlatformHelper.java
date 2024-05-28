@@ -3,6 +3,8 @@ package com.yungnickyoung.minecraft.ribbits.services;
 import com.yungnickyoung.minecraft.ribbits.block.GiantLilyPadBlockForge;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.module.NetworkModuleForge;
+import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStartS2CPacket;
+import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStopS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartAllS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartSingleS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStopSingleS2CPacket;
@@ -54,6 +56,17 @@ public class ForgePlatformHelper implements IPlatformHelper {
         for (RibbitEntity ribbit : masterRibbit.getRibbitsPlayingMusic()) {
             NetworkModuleForge.sendToClient(new RibbitMusicStopSingleS2CPacket(ribbit.getId()), player);
         }
+    }
+
+    @Override
+    public void startHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
+        NetworkModuleForge.sendToClient(new PlayerMusicStartS2CPacket(performer.getId()), audienceMember);
+    }
+
+    @Override
+    public void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
+        NetworkModuleForge.sendToClient(new PlayerMusicStopS2CPacket(performer.getId()), audienceMember);
+
     }
 
     @Override

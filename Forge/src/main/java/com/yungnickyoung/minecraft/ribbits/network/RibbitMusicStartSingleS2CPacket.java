@@ -38,7 +38,7 @@ public class RibbitMusicStartSingleS2CPacket {
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() ->
                 // Make sure this is only executed on the physical client
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlerForge.handleStartSinglePacket(this, ctx))
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlerForge.handleStartSingleRibbitInstrument(this, ctx))
         );
         ctx.get().setPacketHandled(true);
         return true;
