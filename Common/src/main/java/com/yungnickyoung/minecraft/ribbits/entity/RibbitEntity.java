@@ -55,7 +55,10 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class RibbitEntity extends AgeableMob implements GeoEntity {
@@ -417,19 +420,31 @@ public class RibbitEntity extends AgeableMob implements GeoEntity {
         this.playSound(SoundModule.ENTITY_RIBBIT_STEP.get(), 1.0F, 1.0F);
     }
 
+    public boolean isPrideRibbit() {
+        Random rand = new Random(this.getUUID().getLeastSignificantBits());
+
+        return isPrideMonth() && this.getRibbitData().getProfession().equals(RibbitProfessionModule.NITWIT) && rand.nextFloat() < 0.33f;
+    }
+
+    private static boolean isPrideMonth() {
+        LocalDate date = LocalDate.now();
+        int month = date.get(ChronoField.MONTH_OF_YEAR);
+        return month == 6;
+    }
+
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> state) {
         if (this.getUmbrellaFalling()) {
-            state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.PRIDE) ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
+            state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit() ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
         } else if (getPlayingInstrument() && this.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
             state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
         } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.PRIDE)) {
+            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit()) {
                 state.getController().setAnimation(WALK_HOLDING_2);
             } else {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_1 : WALK);
             }
           } else {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.PRIDE)) {
+            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit()) {
                 state.getController().setAnimation(IDLE_HOLDING_2);
             } else {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_1 : IDLE);

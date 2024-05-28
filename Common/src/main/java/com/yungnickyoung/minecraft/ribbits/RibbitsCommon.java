@@ -47,7 +47,6 @@ public class RibbitsCommon {
                 output.accept(ItemModule.RIBBIT_GARDENER_SPAWN_EGG.get());
                 output.accept(ItemModule.RIBBIT_MERCHANT_SPAWN_EGG.get());
                 output.accept(ItemModule.RIBBIT_SORCERER_SPAWN_EGG.get());
-                output.accept(ItemModule.RIBBIT_PRIDE_SPAWN_EGG.get());
             })
             .build();
 

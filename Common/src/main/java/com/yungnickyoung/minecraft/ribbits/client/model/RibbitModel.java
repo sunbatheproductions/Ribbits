@@ -11,6 +11,8 @@ public class RibbitModel extends GeoModel<RibbitEntity> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(RibbitsCommon.MOD_ID, "textures/entity/ribbit.png");
     private static final ResourceLocation ANIMATIONS = new ResourceLocation(RibbitsCommon.MOD_ID, "animations/ribbit.animation.json");
 
+    private static final ResourceLocation PRIDE_MODEL = new ResourceLocation(RibbitsCommon.MOD_ID, "geo/pride_ribbit.geo.json");
+
     @Override
     public ResourceLocation getModelResource(RibbitEntity ribbitEntity) {
         if (ribbitEntity.getPlayingInstrument() && ribbitEntity.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
@@ -18,6 +20,10 @@ public class RibbitModel extends GeoModel<RibbitEntity> {
         } else if (ribbitEntity.getUmbrellaFalling() || (ribbitEntity.level().isRaining() && ribbitEntity.isInWaterOrRain() && !ribbitEntity.isInWater())) {
             return ribbitEntity.getRibbitData().getUmbrellaType().getModelLocation();
         } else {
+            if (ribbitEntity.isPrideRibbit()) {
+                return PRIDE_MODEL;
+            }
+            
             return ribbitEntity.getRibbitData().getProfession().getModelLocation();
         }
     }

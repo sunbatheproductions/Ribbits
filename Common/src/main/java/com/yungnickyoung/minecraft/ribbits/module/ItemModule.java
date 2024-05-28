@@ -29,9 +29,6 @@ public class ItemModule {
     @AutoRegister("ribbit_sorcerer_spawn_egg")
     public static final AutoRegisterItem RIBBIT_SORCERER_SPAWN_EGG = AutoRegisterItem.of(() -> new RibbitSpawnEggItem(EntityTypeModule.RIBBIT.get(), RibbitProfessionModule.SORCERER, 0xb3c35b, 0x774d7e, new Item.Properties()));
 
-    @AutoRegister("ribbit_pride_spawn_egg")
-    public static final AutoRegisterItem RIBBIT_PRIDE_SPAWN_EGG = AutoRegisterItem.of(() -> new RibbitSpawnEggItem(EntityTypeModule.RIBBIT.get(), RibbitProfessionModule.PRIDE, 0xb3c35b, 0xf2760a, new Item.Properties()));
-
     @AutoRegister("maraca")
     public static final AutoRegisterItem MARACA = AutoRegisterItem.of(() -> new MaracaItem(new Item.Properties().stacksTo(1)));
 
