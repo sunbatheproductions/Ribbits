@@ -24,6 +24,9 @@ public abstract class InstrumentSoundInstance<E extends Entity> extends Abstract
         this.looping = true;
         this.delay = 0;
         this.volume = 2.0f;
+        this.x = entity.getX();
+        this.y = entity.getY();
+        this.z = entity.getZ();
     }
 
     @Override
