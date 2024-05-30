@@ -53,6 +53,7 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -149,9 +150,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
                 this.setUmbrellaFalling(false);
             }
 
-            if (this.fallDistance >= 4 || this.getUmbrellaFalling()) {
+            if (this.fallDistance >= 2 || this.getUmbrellaFalling()) {
+                Vec3 velocity = this.getDeltaMovement();
                 this.resetFallDistance();
-                this.push(0.0f, 0.075f, 0.0f);
+                this.setDeltaMovement(velocity.x, -0.1d, velocity.z);
                 this.setUmbrellaFalling(true);
             }
 
