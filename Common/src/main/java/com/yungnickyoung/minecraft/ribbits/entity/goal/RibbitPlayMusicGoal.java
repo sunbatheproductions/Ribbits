@@ -176,6 +176,7 @@ public class RibbitPlayMusicGoal extends Goal {
 
             if (d > 9.0f) {
                 this.ribbit.setPlayingInstrument(false);
+                masterRibbit.removeBandMember(this.ribbit.getRibbitData().getInstrument());
                 this.ribbit.getRibbitData().setInstrument(RibbitInstrumentModule.NONE);
                 masterRibbit.removeRibbitFromPlayingMusic(this.ribbit);
                 this.ribbit.setTicksPlayingMusic(0);

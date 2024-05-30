@@ -387,7 +387,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public void findNewMasterRibbit() {
-        RibbitEntity newMaster = this.getRibbitsPlayingMusic().stream().findAny().orElse(null);
+        RibbitEntity newMaster = this.getRibbitsPlayingMusic().stream().filter(ribbit -> ribbit != this).findAny().orElse(null);
 
         if (newMaster != null) {
             for (RibbitEntity ribbit : this.getRibbitsPlayingMusic()) {
@@ -435,11 +435,14 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
     @Override
     public void remove(RemovalReason reason) {
-        super.remove(reason);
-
         if (this.isMasterRibbit()) {
             findNewMasterRibbit();
+        } else if (this.isPlayingInstrument && this.getMasterRibbit() != null){
+            this.getMasterRibbit().getRibbitsPlayingMusic().remove(this);
+            this.getMasterRibbit().removeBandMember(this.getRibbitData().getInstrument());
         }
+
+        super.remove(reason);
     }
 
     public static AttributeSupplier.Builder createRibbitAttributes() {
