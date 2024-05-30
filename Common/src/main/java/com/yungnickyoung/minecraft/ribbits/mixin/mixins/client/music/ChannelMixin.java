@@ -12,6 +12,7 @@ import org.lwjgl.openal.AL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.nio.IntBuffer;
 import java.util.OptionalInt;
@@ -25,27 +26,30 @@ public class ChannelMixin implements IChannelDuck {
      * Attaches a buffer to the current source using a byte offset grabbed from another existing source.
      * @param instance the sound instance about to be started
      * @param soundBuffer the buffer that the sound should be played on
-     * @param sourceId the source id of the source that the offset should be fetched from
+     * @param existingSoundSource the source id of the source that the offset should be fetched from
      */
     @Override
-    public void ribbits$attachStaticBufferWithByteOffset(SoundInstance instance, SoundBuffer soundBuffer, int sourceId) {
+    public void ribbits$attachStaticBufferWithByteOffset(SoundInstance instance, SoundBuffer soundBuffer, int existingSoundSource) {
         OptionalInt bufferId = ((SoundBufferAccessor) soundBuffer).callGetAlBuffer();
-
         if (bufferId.isEmpty()) return;
 
-        AL10.alSourcei(this.source, 4105, bufferId.getAsInt());
+        // Set the buffer on the source
+        AL10.alSourcei(this.source, AL10.AL_BUFFER, bufferId.getAsInt());
+
+        // Get the byte offset from the existing sound's source. Note that AL_BYTE_OFFSET requires AL11
         IntBuffer bytesToOffset = BufferUtils.createIntBuffer(1);
-
-        if (sourceId != 0) {
-            AL10.alGetSourcei(sourceId, AL11.AL_BYTE_OFFSET, bytesToOffset);
+        if (existingSoundSource != 0) {
+            AL10.alGetSourcei(existingSoundSource, AL11.AL_BYTE_OFFSET, bytesToOffset);
         }
-
         bytesToOffset.rewind();
 
-        IntBuffer byteOffset = BufferUtils.createIntBuffer(1).put(sourceId != 0 ? bytesToOffset.get() : 0);
+        // Copy the byte offset to a new buffer and set it on the source
+        IntBuffer byteOffset = BufferUtils.createIntBuffer(1).put(existingSoundSource != 0 ? bytesToOffset.get() : 0);
         byteOffset.rewind();
         AL11.alSourceiv(this.source, AL11.AL_BYTE_OFFSET, byteOffset);
 
+        // Attach the source id to the sound instance.
+        // This is so that other sounds can grab the byte offset from this sound when they start.
         if (instance instanceof InstrumentSoundInstance<?> ribbitInstrumentSoundInstance) {
             ribbitInstrumentSoundInstance.setSourceId(this.source);
         }
@@ -60,26 +64,42 @@ public class ChannelMixin implements IChannelDuck {
      */
     @Override
     public void ribbits$attachStaticBufferWithTickOffset(SoundInstance instance, SoundBuffer soundBuffer, int ticksToOffset) {
-        IntBuffer frequency = BufferUtils.createIntBuffer(1);
-
         OptionalInt bufferId = ((SoundBufferAccessor) soundBuffer).callGetAlBuffer();
-
         if (bufferId.isEmpty()) return;
 
-        AL10.alSourcei(this.source, 4105, bufferId.getAsInt());
+        // Set the buffer on the source
+        AL10.alSourcei(this.source, AL10.AL_BUFFER, bufferId.getAsInt());
 
-        AL10.alGetBufferi(bufferId.getAsInt(), AL10.AL_FREQUENCY, frequency);
+        // Read the sound parameters from the buffer
+        int frequency = getBufferParameter(bufferId.getAsInt(), AL10.AL_FREQUENCY); // Samples per second
 
-        frequency.rewind();
+        // Calculate the number of samples to offset, based on the tick offset and the frequency of the sound
+        int samplesToOffset = (int) ((ticksToOffset / 20.0f) * frequency);
 
-        int samplesToOffset = (int) ((ticksToOffset / 20.0f) * frequency.get());
+        // TODO - test this (modulo'ing the samples by total song length) and see if it's even necessary?
+        int sizeInBytes = getBufferParameter(bufferId.getAsInt(), AL10.AL_SIZE);
+        int bitsPerSample = getBufferParameter(bufferId.getAsInt(), AL10.AL_BITS);
+        int channels = getBufferParameter(bufferId.getAsInt(), AL10.AL_CHANNELS);
+        int lengthInSamples = sizeInBytes * 8 / (bitsPerSample * channels);
+        samplesToOffset = samplesToOffset % lengthInSamples;
 
+        // Set the sample offset on the source
         IntBuffer sampleOffset = BufferUtils.createIntBuffer(1).put(samplesToOffset);
         sampleOffset.rewind();
         AL11.alSourceiv(this.source, AL11.AL_SAMPLE_OFFSET, sampleOffset);
 
+        // Attach the source id to the sound instance.
+        // This is so that other sounds can grab the byte offset from this sound when they start.
         if (instance instanceof InstrumentSoundInstance<?> ribbitInstrumentSoundInstance) {
             ribbitInstrumentSoundInstance.setSourceId(this.source);
         }
+    }
+
+    @Unique
+    private int getBufferParameter(int buffer, int param) {
+        IntBuffer bufferParam = BufferUtils.createIntBuffer(1);
+        AL10.alGetBufferi(buffer, param, bufferParam);
+        bufferParam.rewind();
+        return bufferParam.get();
     }
 }
