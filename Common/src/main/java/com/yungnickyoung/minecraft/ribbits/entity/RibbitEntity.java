@@ -572,7 +572,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         }
 
         MerchantOffers merchantOffers = this.getOffers();
-        this.addOffersFromItemListings(merchantOffers, itemListings, 2);
+        this.addOffersFromItemListings(merchantOffers, itemListings, 4);
     }
 
     protected void addOffersFromItemListings(MerchantOffers merchantOffers, RibbitTradeModule.ItemListing[] itemListings, int i) {
