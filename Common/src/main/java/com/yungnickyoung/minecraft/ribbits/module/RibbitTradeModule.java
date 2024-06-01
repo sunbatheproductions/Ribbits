@@ -49,7 +49,9 @@ public class RibbitTradeModule {
                 new ItemsForAmethysts(Items.OAK_SAPLING, 2, 6, 4, 8, 16),
                 new ItemsForAmethysts(Items.SPRUCE_SAPLING, 2, 6, 4, 8, 16),
                 new ItemsForAmethysts(Items.CHERRY_SAPLING, 2, 6, 4, 8, 16),
-                new ItemsForAmethysts(Items.MANGROVE_PROPAGULE, 2, 6, 4, 8, 16)
+                new ItemsForAmethysts(Items.MANGROVE_PROPAGULE, 2, 6, 4, 8, 16),
+
+                new ItemsForAmethysts(ItemModule.MARACA.get(), 6, 8, 1, 1, 4)
         });
         tradeMap.put(RibbitProfessionModule.FISHERMAN, new ItemListing[]{
                 new ItemsForAmethysts(Items.AXOLOTL_BUCKET, 4, 8, 1, 1, 16),
