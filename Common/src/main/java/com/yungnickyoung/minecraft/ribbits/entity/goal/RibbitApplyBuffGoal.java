@@ -14,13 +14,17 @@ public class RibbitApplyBuffGoal extends Goal {
     private final double range;
     private final int effectDuration;
     private final int cooldownTicks;
+    private final int ticksToApplyBuff;
     private final List<MobEffect> effects;
 
-    public RibbitApplyBuffGoal(RibbitEntity ribbit, double range, int effectDuration, int cooldownTicks, MobEffect... effects) {
+    private int applyBuffTicks;
+
+    public RibbitApplyBuffGoal(RibbitEntity ribbit, double range, int effectDuration, int cooldownTicks, int ticksToApplyBuff, MobEffect... effects) {
         this.ribbit = ribbit;
         this.range = range;
         this.effectDuration = effectDuration;
         this.cooldownTicks = cooldownTicks;
+        this.ticksToApplyBuff = ticksToApplyBuff;
         this.effects = List.of(effects);
     }
 
@@ -31,21 +35,45 @@ public class RibbitApplyBuffGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return false;
+        return this.applyBuffTicks >= 0;
+    }
+
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        if (this.applyBuffTicks >= this.ticksToApplyBuff) {
+            this.applyBuffs();
+        } else {
+            this.applyBuffTicks++;
+        }
     }
 
     @Override
     public void start() {
+        this.applyBuffTicks = 0;
+        this.ribbit.setBuffing(true);
+    }
+
+    @Override
+    public void stop() {
+        this.ribbit.setBuffCooldown(this.cooldownTicks);
+        this.applyBuffTicks = 0;
+    }
+
+    private void applyBuffs() {
+        this.applyBuffTicks = -1;
+
         List<Player> nearbyPlayers = this.ribbit.level().getNearbyPlayers(TargetingConditions.forCombat().range(this.range), this.ribbit, this.ribbit.getBoundingBox().inflate(this.range, 5.0d, this.range));
 
         MobEffect randomEffect = this.effects.get(this.ribbit.getRandom().nextInt(this.effects.size()));
         for (Player player : nearbyPlayers) {
             player.addEffect(new MobEffectInstance(randomEffect, this.effectDuration, 0));
         }
-    }
 
-    @Override
-    public void stop() {
-        this.ribbit.setBuffCooldown(this.cooldownTicks);
+        this.ribbit.setBuffing(false);
     }
 }

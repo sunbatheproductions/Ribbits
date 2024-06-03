@@ -78,9 +78,18 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
     private static final RawAnimation IDLE_HOLDING_1 = RawAnimation.begin().thenPlay("idle_holding_1");
     private static final RawAnimation IDLE_HOLDING_2 = RawAnimation.begin().thenPlay("idle_holding_2");
+    private static final RawAnimation IDLE_HOLDING_HAT = RawAnimation.begin().thenPlay("idle_holding_hat");
+    private static final RawAnimation IDLE_HOLDING_FISHERMAN = RawAnimation.begin().thenPlay("idle_holding_fisherman");
     private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
     private static final RawAnimation WALK_HOLDING_1 = RawAnimation.begin().thenPlay("walk_holding_1");
     private static final RawAnimation WALK_HOLDING_2 = RawAnimation.begin().thenPlay("walk_holding_2");
+    private static final RawAnimation WALK_HOLDING_HAT = RawAnimation.begin().thenPlay("walk_holding_hat");
+    private static final RawAnimation WALK_HOLDING_FISHERMAN = RawAnimation.begin().thenPlay("walk_holding_fisherman");
+    private static final RawAnimation SORCERER_BUFF = RawAnimation.begin().thenPlay("spell");
+    private static final RawAnimation SORCERER_BUFF_HOLDING = RawAnimation.begin().thenPlay("spell_holding");
+    private static final RawAnimation FISH = RawAnimation.begin().thenPlay("fishing");
+    private static final RawAnimation FISH_HOLDING = RawAnimation.begin().thenPlay("fishing_holding");
+    private static final RawAnimation WATER_CROPS = RawAnimation.begin().thenPlay("water_crops");
 
     @Nullable
     private Player tradingPlayer;
@@ -93,13 +102,14 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
     private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 100);
     private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d);
-    private final RibbitApplyBuffGoal applyBuffGoal = new RibbitApplyBuffGoal(this, 16.0d, 100, 600, MobEffects.REGENERATION, MobEffects.DAMAGE_RESISTANCE, MobEffects.DAMAGE_BOOST, MobEffects.JUMP, MobEffects.DIG_SPEED, MobEffects.HEALTH_BOOST);
+    private final RibbitApplyBuffGoal applyBuffGoal = new RibbitApplyBuffGoal(this, 16.0d, 100, 600, 22, MobEffects.REGENERATION, MobEffects.DAMAGE_RESISTANCE, MobEffects.DAMAGE_BOOST, MobEffects.JUMP, MobEffects.DIG_SPEED, MobEffects.HEALTH_BOOST);
 
     private static final EntityDataAccessor<RibbitData> RIBBIT_DATA = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializerModule.RIBBIT_DATA_SERIALIZER);
     private static final EntityDataAccessor<Boolean> PLAYING_INSTRUMENT = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> UMBRELLA_FALLING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> WATERING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FISHING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> BUFFING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
 
     // These fields are used to prevent threadlocking by accessing entityData on rendering thread
     private RibbitData sidedRibbitData = new RibbitData(RibbitProfessionModule.NITWIT, RibbitUmbrellaTypeModule.UMBRELLA_1, RibbitInstrumentModule.NONE);
@@ -107,6 +117,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private boolean isUmbrellaFalling = false;
     private boolean isWatering = false;
     private boolean isFishing = false;
+    private boolean isBuffing = false;
 
     // NOTE: Fields below here are used only on Server
     private int ticksPlayingMusic;
@@ -175,6 +186,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.entityData.define(UMBRELLA_FALLING, false);
         this.entityData.define(WATERING, false);
         this.entityData.define(FISHING, false);
+        this.entityData.define(BUFFING, false);
     }
 
     @Override
@@ -219,6 +231,8 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             this.isFishing = this.entityData.get(FISHING);
         } else if (WATERING.equals(dataAccessor)) {
             this.isWatering = this.entityData.get(WATERING);
+        } else if (BUFFING.equals(dataAccessor)) {
+            this.isBuffing = this.entityData.get(BUFFING);
         }
     }
 
@@ -341,6 +355,14 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
     public void setFishing(boolean isFishing) {
         this.entityData.set(FISHING, isFishing);
+    }
+
+    public boolean getBuffing() {
+        return this.isBuffing;
+    }
+
+    public void setBuffing(boolean isBuffing) {
+        this.entityData.set(BUFFING, isBuffing);
     }
 
     public int getTicksPlayingMusic() {
@@ -495,15 +517,29 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit() ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
         } else if (getPlayingInstrument() && this.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
             state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
+        } else if (getBuffing()) {
+            state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? SORCERER_BUFF_HOLDING : SORCERER_BUFF);
+        } else if (getFishing()) {
+            state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? FISH_HOLDING : FISH);
+        } else if (getWatering()) {
+            state.getController().setAnimation(WATER_CROPS);
         } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit()) {
+            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
+                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
+            } else if (this.isPrideRibbit()) {
                 state.getController().setAnimation(WALK_HOLDING_2);
+            } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
+                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_HAT : WALK);
             } else {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_1 : WALK);
             }
           } else {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit()) {
+            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
+                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_FISHERMAN : IDLE_HOLDING_2);
+            } else if (this.isPrideRibbit()) {
                 state.getController().setAnimation(IDLE_HOLDING_2);
+            } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
+                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_HAT : IDLE);
             } else {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_1 : IDLE);
             }
