@@ -4,19 +4,19 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RibbitUmbrellaType {
     private final ResourceLocation id;
-    private final ResourceLocation modelLocation;
+    private final String modelLocationSuffix;
 
-    public RibbitUmbrellaType(ResourceLocation id, ResourceLocation modelLocation) {
+    public RibbitUmbrellaType(ResourceLocation id, String modelLocationSuffix) {
         this.id = id;
-        this.modelLocation = modelLocation;
+        this.modelLocationSuffix = modelLocationSuffix;
     }
 
     public ResourceLocation getId() {
         return this.id;
     }
 
-    public ResourceLocation getModelLocation() {
-        return this.modelLocation;
+    public String getModelLocationSuffix() {
+        return this.modelLocationSuffix;
     }
 
     @Override
