@@ -16,16 +16,16 @@ public class RibbitUmbrellaTypeModule {
     private static final Map<ResourceLocation, RibbitUmbrellaType> UMBRELLA_TYPE_REGISTRY = new HashMap<>();
 
     /* Registration of built-in RibbitUmbrellaTypes. */
-    public static final RibbitUmbrellaType UMBRELLA_1 = register("umbrella_1", "geo/umbrella_ribbit_1.geo.json");
-    public static final RibbitUmbrellaType UMBRELLA_2 = register("umbrella_2", "geo/umbrella_ribbit_2.geo.json");
-    public static final RibbitUmbrellaType UMBRELLA_3 = register("umbrella_3", "geo/umbrella_ribbit_3.geo.json");
+    public static final RibbitUmbrellaType UMBRELLA_1 = register("umbrella_1", "umbrella_1.geo.json");
+    public static final RibbitUmbrellaType UMBRELLA_2 = register("umbrella_2", "umbrella_2.geo.json");
+    public static final RibbitUmbrellaType UMBRELLA_3 = register("umbrella_3", "umbrella_3.geo.json");
 
     /**
      * Registers a RibbitUmbrellaType with the given name and model path.
      */
-    public static RibbitUmbrellaType register(String name, String modelPath) {
+    public static RibbitUmbrellaType register(String name, String modelPathSuffix) {
         ResourceLocation id = RibbitsCommon.id(name);
-        RibbitUmbrellaType umbrellaType = new RibbitUmbrellaType(id, RibbitsCommon.id(modelPath));
+        RibbitUmbrellaType umbrellaType = new RibbitUmbrellaType(id, modelPathSuffix);
         UMBRELLA_TYPE_REGISTRY.put(id, umbrellaType);
         return umbrellaType;
     }

@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.merchant_ribbit_3",
+				"identifier": "geometry.merchant_ribbit_2",
 				"texture_width": 128,
 				"texture_height": 128,
 				"visible_bounds_width": 3,
@@ -21,7 +21,6 @@
 					"pivot": [0, 2, -1],
 					"cubes": [
 						{"origin": [-4, 2, -4], "size": [8, 8, 7], "uv": [0, 0]},
-						{"origin": [-4.5, 4, -1.5], "size": [9, 4, 5], "uv": [19, 115]},
 						{"origin": [-4, 9, 3], "size": [8, 3, 3], "uv": [0, 92]},
 						{"origin": [-3, 3, 3], "size": [6, 6, 4], "uv": [1, 82]},
 						{"origin": [-4, 3, 3], "size": [1, 3, 3], "uv": [1, 99]},
@@ -61,18 +60,14 @@
 					]
 				},
 				{
-					"name": "accessories",
+					"name": "umbrella2",
 					"parent": "body",
-					"pivot": [0, 2, -1]
-				},
-				{
-					"name": "umbrella3",
-					"parent": "accessories",
 					"pivot": [0, 5.6, -5.4],
 					"rotation": [-2.5, 142.5, -2.5],
 					"cubes": [
-						{"origin": [-8.5, 15.1, -13.9], "size": [17, 0, 17], "uv": [-1, 64]},
-						{"origin": [-0.5, 5.1, -5.9], "size": [1, 10, 1], "uv": [0, 64]}
+						{"origin": [-2.5, 15.1, -7.9], "size": [5, 2, 5], "uv": [33, 57]},
+						{"origin": [-6.5, 16.1, -11.9], "size": [13, 0, 13], "uv": [20, 24]},
+						{"origin": [-0.5, 5.1, -5.9], "size": [1, 10, 1], "uv": [0, 53]}
 					]
 				},
 				{
