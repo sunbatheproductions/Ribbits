@@ -5,13 +5,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class RibbitMusicStartSingleS2CPacket {
-    private final int ribbitId;
+    private final UUID ribbitId;
     private final int tickOffset;
 
-    public RibbitMusicStartSingleS2CPacket(int ribbitId, int tickOffset) {
+    public RibbitMusicStartSingleS2CPacket(UUID ribbitId, int tickOffset) {
         this.ribbitId = ribbitId;
         this.tickOffset = tickOffset;
     }
@@ -20,7 +21,7 @@ public class RibbitMusicStartSingleS2CPacket {
      * Decoder
      */
     public RibbitMusicStartSingleS2CPacket(FriendlyByteBuf buf) {
-        this.ribbitId = buf.readInt();
+        this.ribbitId = buf.readUUID();
         this.tickOffset = buf.readInt();
     }
 
@@ -28,7 +29,7 @@ public class RibbitMusicStartSingleS2CPacket {
      * Encoder
      */
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(this.ribbitId);
+        buf.writeUUID(this.ribbitId);
         buf.writeInt(this.tickOffset);
     }
 
@@ -44,7 +45,7 @@ public class RibbitMusicStartSingleS2CPacket {
         return true;
     }
 
-    public int getRibbitId() {
+    public UUID getRibbitId() {
         return this.ribbitId;
     }
 

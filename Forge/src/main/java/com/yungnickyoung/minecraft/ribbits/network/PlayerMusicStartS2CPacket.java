@@ -5,12 +5,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PlayerMusicStartS2CPacket {
-    private final int performerId;
+    private final UUID performerId;
 
-    public PlayerMusicStartS2CPacket(int performerId) {
+    public PlayerMusicStartS2CPacket(UUID performerId) {
         this.performerId = performerId;
     }
 
@@ -18,14 +19,14 @@ public class PlayerMusicStartS2CPacket {
      * Decoder
      */
     public PlayerMusicStartS2CPacket(FriendlyByteBuf buf) {
-        this.performerId = buf.readInt();
+        this.performerId = buf.readUUID();
     }
 
     /**
      * Encoder
      */
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(this.performerId);
+        buf.writeUUID(this.performerId);
     }
 
     /**
@@ -40,7 +41,7 @@ public class PlayerMusicStartS2CPacket {
         return true;
     }
 
-    public int getPerformerId() {
+    public UUID getPerformerId() {
         return this.performerId;
     }
 }

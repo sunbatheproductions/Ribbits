@@ -9,16 +9,17 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class RibbitMusicStartAllS2CPacket {
-    private final List<Integer> ribbitIds;
+    private final List<UUID> ribbitIds;
     private final int tickOffset;
 
     public RibbitMusicStartAllS2CPacket(RibbitEntity masterRibbit, int tickOffset) {
-        List<Integer> ribbitIds = new ArrayList<>();
-        ribbitIds.add(masterRibbit.getId());
-        ribbitIds.addAll(masterRibbit.getRibbitsPlayingMusic().stream().map(RibbitEntity::getId).toList());
+        List<UUID> ribbitIds = new ArrayList<>();
+        ribbitIds.add(masterRibbit.getUUID());
+        ribbitIds.addAll(masterRibbit.getRibbitsPlayingMusic().stream().map(RibbitEntity::getUUID).toList());
         this.ribbitIds = ribbitIds;
         this.tickOffset = tickOffset;
     }
@@ -27,7 +28,7 @@ public class RibbitMusicStartAllS2CPacket {
      * Decoder
      */
     public RibbitMusicStartAllS2CPacket(FriendlyByteBuf buf) {
-        this.ribbitIds = BufferUtils.readIntList(buf);
+        this.ribbitIds = BufferUtils.readUUIDList(buf);
         this.tickOffset = buf.readInt();
     }
 
@@ -35,7 +36,7 @@ public class RibbitMusicStartAllS2CPacket {
      * Encoder
      */
     public void toBytes(FriendlyByteBuf buf) {
-        BufferUtils.writeIntList(this.ribbitIds, buf);
+        BufferUtils.writeUUIDList(this.ribbitIds, buf);
         buf.writeInt(tickOffset);
     }
 
@@ -51,7 +52,7 @@ public class RibbitMusicStartAllS2CPacket {
         return true;
     }
 
-    public List<Integer> getRibbitIds() {
+    public List<UUID> getRibbitIds() {
         return this.ribbitIds;
     }
 

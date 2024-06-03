@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Mixin(SoundEngine.class)
@@ -86,7 +87,7 @@ public class SoundEngineMixin implements ISoundEngineDuck {
                             // This should never happen, but if it does, we'll just play the sound from the start.
                             // Note that for player instrument sounds, this is NOT an error, as we expect this to happen
                             // when the player starts playing and no Ribbits or other instruments are playing nearby.
-                            RibbitsCommon.LOGGER.error("Tried to play Ribbit sound with byte offset, but no existing sound was found!" +
+                            RibbitsCommon.LOGGER.debug("Tried to play Ribbit sound with byte offset, but no existing sound was found!" +
                                     " Playing from the start instead...");
                         }
 
@@ -106,22 +107,22 @@ public class SoundEngineMixin implements ISoundEngineDuck {
 
     @Unique
     @Override
-    public void ribbits$stopRibbitsMusic(int ribbitEntityId) {
+    public void ribbits$stopRibbitsMusic(UUID ribbitEntityId) {
         List<RibbitInstrumentSoundInstance> soundsToStop = this.tickingSounds.stream()
                 .filter(instance -> instance instanceof RibbitInstrumentSoundInstance)
                 .map(instance -> (RibbitInstrumentSoundInstance) instance)
-                .filter(instance -> instance.getRibbit().getId() == ribbitEntityId)
+                .filter(instance -> instance.getRibbit().getUUID().equals(ribbitEntityId))
                 .toList();
         soundsToStop.forEach(RibbitInstrumentSoundInstance::stopSound);
     }
 
     @Unique
     @Override
-    public void ribbits$stopMaraca(int playerId) {
+    public void ribbits$stopMaraca(UUID playerId) {
         List<PlayerInstrumentSoundInstance> soundsToStop = this.tickingSounds.stream()
                 .filter(instance -> instance instanceof PlayerInstrumentSoundInstance)
                 .map(instance -> (PlayerInstrumentSoundInstance) instance)
-                .filter(instance -> instance.getPlayer().getId() == playerId)
+                .filter(instance -> instance.getPlayer().getUUID().equals(playerId))
                 .toList();
         soundsToStop.forEach(PlayerInstrumentSoundInstance::stopSound);
     }

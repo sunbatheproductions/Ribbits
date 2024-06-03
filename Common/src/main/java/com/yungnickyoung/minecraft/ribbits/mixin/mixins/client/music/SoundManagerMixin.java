@@ -8,17 +8,19 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.UUID;
+
 @Mixin(SoundManager.class)
 public class SoundManagerMixin implements ISoundManagerDuck {
     @Shadow @Final private SoundEngine soundEngine;
 
     @Override
-    public void ribbits$stopRibbitsMusic(int ribbitEntityId) {
+    public void ribbits$stopRibbitsMusic(UUID ribbitEntityId) {
         ((ISoundEngineDuck) this.soundEngine).ribbits$stopRibbitsMusic(ribbitEntityId);
     }
 
     @Override
-    public void ribbits$stopMaraca(int playerId) {
+    public void ribbits$stopMaraca(UUID playerId) {
         ((ISoundEngineDuck) this.soundEngine).ribbits$stopMaraca(playerId);
     }
 }

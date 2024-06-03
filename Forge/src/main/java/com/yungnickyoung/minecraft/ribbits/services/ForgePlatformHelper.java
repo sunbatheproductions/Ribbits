@@ -41,7 +41,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
         // If this ribbit is the master ribbit, use its stored tick value, since there is no existing ticking sound to grab the byte offset from.
         // Otherwise, use -1 to indicate that the client should use a byte offset instead, which will be fetched from the existing ticking sound.
         int tickOffset = newRibbit.equals(masterRibbit) ? masterRibbit.getTicksPlayingMusic() : -1;
-        NetworkModuleForge.sendToAllClients(new RibbitMusicStartSingleS2CPacket(newRibbit.getId(), tickOffset));
+        NetworkModuleForge.sendToAllClients(new RibbitMusicStartSingleS2CPacket(newRibbit.getUUID(), tickOffset));
     }
 
     @Override
@@ -51,21 +51,21 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void onPlayerExitBandRange(ServerPlayer player, ServerLevel serverLevel, RibbitEntity masterRibbit) {
-        NetworkModuleForge.sendToClient(new RibbitMusicStopSingleS2CPacket(masterRibbit.getId()), player);
+        NetworkModuleForge.sendToClient(new RibbitMusicStopSingleS2CPacket(masterRibbit.getUUID()), player);
 
         for (RibbitEntity ribbit : masterRibbit.getRibbitsPlayingMusic()) {
-            NetworkModuleForge.sendToClient(new RibbitMusicStopSingleS2CPacket(ribbit.getId()), player);
+            NetworkModuleForge.sendToClient(new RibbitMusicStopSingleS2CPacket(ribbit.getUUID()), player);
         }
     }
 
     @Override
     public void startHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
-        NetworkModuleForge.sendToClient(new PlayerMusicStartS2CPacket(performer.getId()), audienceMember);
+        NetworkModuleForge.sendToClient(new PlayerMusicStartS2CPacket(performer.getUUID()), audienceMember);
     }
 
     @Override
     public void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
-        NetworkModuleForge.sendToClient(new PlayerMusicStopS2CPacket(performer.getId()), audienceMember);
+        NetworkModuleForge.sendToClient(new PlayerMusicStopS2CPacket(performer.getUUID()), audienceMember);
 
     }
 

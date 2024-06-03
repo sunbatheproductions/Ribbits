@@ -6,6 +6,7 @@ import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundIns
 import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.mixin.interfaces.client.ISoundManagerDuck;
+import com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.accessor.ClientLevelAccessor;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.module.SoundModule;
 import com.yungnickyoung.minecraft.ribbits.util.BufferUtils;
@@ -18,18 +19,19 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ClientPacketHandlerFabric {
     public static void receiveStartSingle(Minecraft client,
                                           ClientPacketListener clientPacketListener,
                                           FriendlyByteBuf buf,
                                           PacketSender responseSender) {
-        int entityId = buf.readInt();
-        RibbitEntity ribbit = (RibbitEntity) client.level.getEntity(entityId);
+        UUID entityId = buf.readUUID();
+        RibbitEntity ribbit = (RibbitEntity) ((ClientLevelAccessor) client.level).callGetEntities().get(entityId);
         int tickOffset = buf.readInt();
 
         if (ribbit == null) {
-            RibbitsCommon.LOGGER.error("Received Start Music packet for a ribbit with ID {} that doesn't exist!", entityId);
+            RibbitsCommon.LOGGER.error("Received Start Music packet for a ribbit with UUID {} that doesn't exist!", entityId);
             return;
         }
 
@@ -49,13 +51,13 @@ public class ClientPacketHandlerFabric {
                                        ClientPacketListener clientPacketListener,
                                        FriendlyByteBuf buf,
                                        PacketSender responseSender) {
-        List<Integer> entityIds = BufferUtils.readIntList(buf);
+        List<UUID> entityIds = BufferUtils.readUUIDList(buf);
         int tickOffset = buf.readInt();
 
-        for (int id : entityIds) {
-            RibbitEntity ribbit = (RibbitEntity) client.level.getEntity(id);
+        for (UUID id : entityIds) {
+            RibbitEntity ribbit = (RibbitEntity) ((ClientLevelAccessor) client.level).callGetEntities().get(id);
             if (ribbit == null) {
-                RibbitsCommon.LOGGER.error("Received Start Music All packet for a ribbit with ID {} that doesn't exist!", id);
+                RibbitsCommon.LOGGER.error("Received Start Music All packet for a ribbit with UUID {} that doesn't exist!", id);
                 return;
             }
 
@@ -76,11 +78,11 @@ public class ClientPacketHandlerFabric {
                                    ClientPacketListener clientPacketListener,
                                    FriendlyByteBuf buf,
                                    PacketSender responseSender) {
-        int entityId = buf.readInt();
-        RibbitEntity ribbit = (RibbitEntity) client.level.getEntity(entityId);
+        UUID entityId = buf.readUUID();
+        RibbitEntity ribbit = (RibbitEntity) ((ClientLevelAccessor) client.level).callGetEntities().get(entityId);
 
         if (ribbit == null) {
-            RibbitsCommon.LOGGER.error("Received Stop Music packet for a ribbit with ID {} that doesn't exist!", entityId);
+            RibbitsCommon.LOGGER.error("Received Stop Music packet for a ribbit with UUID {} that doesn't exist!", entityId);
             return;
         }
 
@@ -93,14 +95,14 @@ public class ClientPacketHandlerFabric {
                                           ClientPacketListener clientPacketListener,
                                           FriendlyByteBuf buf,
                                           PacketSender responseSender) {
-        int performerId = buf.readInt();
-        Entity performer = client.level.getEntity(performerId);
+        UUID performerId = buf.readUUID();
+        Entity performer = ((ClientLevelAccessor) client.level).callGetEntities().get(performerId);
 
         if (performer == null) {
-            RibbitsCommon.LOGGER.error("Received Start Maraca packet for Player performer with id {} that doesn't exist!", performerId);
+            RibbitsCommon.LOGGER.error("Received Start Maraca packet for Player performer with UUID {} that doesn't exist!", performerId);
             return;
         } else if (!(performer instanceof Player)) {
-            RibbitsCommon.LOGGER.error("Received Start Maraca packet for non-Player performer with id {}!", performerId);
+            RibbitsCommon.LOGGER.error("Received Start Maraca packet for non-Player performer with UUID {}!", performerId);
             return;
         }
 
@@ -113,14 +115,14 @@ public class ClientPacketHandlerFabric {
                                          ClientPacketListener clientPacketListener,
                                          FriendlyByteBuf buf,
                                          PacketSender responseSender) {
-        int performerId = buf.readInt();
-        Entity performer = client.level.getEntity(performerId);
+        UUID performerId = buf.readUUID();
+        Entity performer = ((ClientLevelAccessor) client.level).callGetEntities().get(performerId);
 
         if (performer == null) {
-            RibbitsCommon.LOGGER.error("Received Stop Maraca packet for Player performer with id {} that doesn't exist!", performerId);
+            RibbitsCommon.LOGGER.error("Received Stop Maraca packet for Player performer with UUID {} that doesn't exist!", performerId);
             return;
         } else if (!(performer instanceof Player)) {
-            RibbitsCommon.LOGGER.error("Received Stop Maraca packet for non-Player performer with id {}!", performerId);
+            RibbitsCommon.LOGGER.error("Received Stop Maraca packet for non-Player performer with UUID {}!", performerId);
             return;
         }
 
