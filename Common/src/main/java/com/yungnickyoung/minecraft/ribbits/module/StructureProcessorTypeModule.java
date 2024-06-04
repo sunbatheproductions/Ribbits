@@ -1,6 +1,7 @@
 package com.yungnickyoung.minecraft.ribbits.module;
 
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
+import com.yungnickyoung.minecraft.ribbits.services.Services;
 import com.yungnickyoung.minecraft.ribbits.world.processor.BlockReplaceProcessor;
 import com.yungnickyoung.minecraft.ribbits.world.processor.BrewingStandProcessor;
 import com.yungnickyoung.minecraft.ribbits.world.processor.LapisBlockProcessor;
@@ -8,6 +9,7 @@ import com.yungnickyoung.minecraft.ribbits.world.processor.PillarProcessor;
 import com.yungnickyoung.minecraft.ribbits.world.processor.PodzolProcessor;
 import com.yungnickyoung.minecraft.ribbits.world.processor.WarpedNyliumProcessor;
 import com.yungnickyoung.minecraft.yungsapi.api.autoregister.AutoRegister;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 
 @AutoRegister(RibbitsCommon.MOD_ID)
@@ -29,4 +31,7 @@ public class StructureProcessorTypeModule {
 
     @AutoRegister("brewing_stand_processor")
     public static StructureProcessorType<BrewingStandProcessor> BREWING_STAND_PROCESSOR = () -> BrewingStandProcessor.CODEC;
+
+    @AutoRegister("debug_structure_processor")
+    public static StructureProcessorType<StructureProcessor> DEBUG_STRUCTURE_PROCESSOR = () -> Services.PLATFORM.getDebugStructureProcessorCodec();
 }

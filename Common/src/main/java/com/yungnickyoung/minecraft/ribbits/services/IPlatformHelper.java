@@ -1,9 +1,11 @@
 package com.yungnickyoung.minecraft.ribbits.services;
 
+import com.mojang.serialization.Codec;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 
 import java.util.function.Supplier;
 
@@ -47,4 +49,6 @@ public interface IPlatformHelper {
     void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember);
 
     Supplier<Block> getGiantLilyPadBlock();
+
+    Codec<StructureProcessor> getDebugStructureProcessorCodec();
 }

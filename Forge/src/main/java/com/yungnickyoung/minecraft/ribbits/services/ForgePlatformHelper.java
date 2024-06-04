@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.ribbits.services;
 
+import com.mojang.serialization.Codec;
 import com.yungnickyoung.minecraft.ribbits.block.GiantLilyPadBlockForge;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.module.NetworkModuleForge;
@@ -13,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.fml.ModList;
@@ -79,5 +81,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
                         .sound(SoundType.LILY_PAD)
                         .noOcclusion()
                         .pushReaction(PushReaction.DESTROY));
+    }
+
+    @Override
+    public Codec<StructureProcessor> getDebugStructureProcessorCodec() {
+        return null;
     }
 }

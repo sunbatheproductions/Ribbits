@@ -1,9 +1,11 @@
 package com.yungnickyoung.minecraft.ribbits.services;
 
+import com.mojang.serialization.Codec;
 import com.yungnickyoung.minecraft.ribbits.block.GiantLilyPadBlock;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.module.NetworkModuleFabric;
 import com.yungnickyoung.minecraft.ribbits.util.BufferUtils;
+import com.yungnickyoung.minecraft.ribbits.world.processor.DebugStructureProcessor;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -14,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
@@ -101,5 +104,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
                         .sound(SoundType.LILY_PAD)
                         .noOcclusion()
                         .pushReaction(PushReaction.DESTROY));
+    }
+
+    @Override
+    public Codec<StructureProcessor> getDebugStructureProcessorCodec() {
+        return DebugStructureProcessor.CODEC;
     }
 }
