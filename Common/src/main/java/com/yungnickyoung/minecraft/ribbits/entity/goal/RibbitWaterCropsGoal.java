@@ -43,6 +43,10 @@ public class RibbitWaterCropsGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (this.ribbit.level().isNight()) {
+            return false;
+        }
+
         Optional<BlockPos> cropPos = BlockPos.findClosestMatch(this.ribbit.getOnPos(), (int) range, 5, blockpos -> {
             if (this.ribbit.level().getBlockState(blockpos).getBlock() instanceof CropBlock cropBlock) {
                 return !cropBlock.isMaxAge(this.ribbit.level().getBlockState(blockpos));

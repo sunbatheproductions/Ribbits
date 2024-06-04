@@ -9,7 +9,9 @@ import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitApplyBuffGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitFishGoal;
+import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitGoHomeGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitPlayMusicGoal;
+import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStrollGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitWaterCropsGoal;
 import com.yungnickyoung.minecraft.ribbits.module.EntityDataSerializerModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
@@ -18,6 +20,8 @@ import com.yungnickyoung.minecraft.ribbits.module.RibbitTradeModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitUmbrellaTypeModule;
 import com.yungnickyoung.minecraft.ribbits.module.SoundModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -42,7 +46,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -123,6 +126,8 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     // NOTE: Fields below here are used only on Server
     private int ticksPlayingMusic;
 
+    private BlockPos homePosition;
+
     /**
      * Set of Ribbits playing music with this Ribbit as the master.
      * Only used if this Ribbit is the master.
@@ -148,9 +153,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         super.registerGoals();
         this.goalSelector.addGoal(0, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.5D));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(1, new RibbitGoHomeGoal(this, 2, 1.5f, 60));
+        this.goalSelector.addGoal(2, new PanicGoal(this, 1.5D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new RibbitStrollGoal(this, 1.0D, 16));
     }
 
     @Override
@@ -202,6 +208,12 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             this.offers = new MerchantOffers(tag.getCompound("Offers"));
         }
 
+        if (tag.contains("HomePosX") && tag.contains("HomePosY") && tag.contains("HomePosZ")) {
+            this.homePosition = new BlockPos(tag.getInt("HomePosX"), tag.getInt("HomePosY"), tag.getInt("HomePosZ"));
+        } else {
+            this.homePosition = new BlockPos(this.blockPosition());
+        }
+
         this.reassessGoals();
     }
 
@@ -215,6 +227,12 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         MerchantOffers merchantOffers = this.getOffers();
         if (!merchantOffers.isEmpty()) {
             tag.put("Offers", merchantOffers.createTag());
+        }
+
+        if (this.homePosition != null) {
+            tag.putInt("HomePosX", this.homePosition.getX());
+            tag.putInt("HomePosY", this.homePosition.getY());
+            tag.putInt("HomePosZ", this.homePosition.getZ());
         }
     }
 
@@ -258,13 +276,23 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         }
 
         this.reassessGoals();
+
+        this.homePosition = this.blockPosition();
         return data;
     }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
-        if (!itemStack.is(Items.VILLAGER_SPAWN_EGG) && this.isAlive() && !this.isTrading() && !this.isSleeping()) {
+
+        if (player.isSecondaryUseActive() && itemStack.is(Items.AMETHYST_SHARD)) {
+            this.homePosition = this.blockPosition();
+            this.level().broadcastEntityEvent(this, (byte) 12);
+
+            if (!player.getAbilities().instabuild) {
+                itemStack.shrink(1);
+            }
+        } else if (this.isAlive() && !this.isTrading() && !this.isSleeping()) {
             if (this.isBaby()) {
                 return InteractionResult.PASS;
             }
@@ -304,6 +332,24 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         }
     }
 
+    @Override
+    public void handleEntityEvent(byte flag) {
+        if (flag == 12) {
+            this.addParticlesAroundSelf(ParticleTypes.HEART);
+        }
+
+        super.handleEntityEvent(flag);
+    }
+
+    protected void addParticlesAroundSelf(ParticleOptions particleOptions) {
+        for (int i = 0; i < 5; ++i) {
+            double d = this.random.nextGaussian() * 0.02;
+            double e = this.random.nextGaussian() * 0.02;
+            double f = this.random.nextGaussian() * 0.02;
+            this.level().addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 1.0, this.getRandomZ(1.0), d, e, f);
+        }
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob parent) {
@@ -324,6 +370,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
     public void setRibbitData(RibbitData data) {
         this.entityData.set(RIBBIT_DATA, data);
+    }
+
+    public BlockPos getHomePosition() {
+        return this.homePosition;
     }
 
     public boolean getPlayingInstrument() {

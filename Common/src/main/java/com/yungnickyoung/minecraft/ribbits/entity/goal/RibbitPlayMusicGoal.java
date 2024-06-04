@@ -40,6 +40,10 @@ public class RibbitPlayMusicGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (this.ribbit.level().isNight()) {
+            return false;
+        }
+
         // Scan for other ribbits playing music and sync master ribbit with them
         this.ribbit.level().getEntitiesOfClass(RibbitEntity.class, this.ribbit.getBoundingBox().inflate(64.0d, 16.0d, 64.0d)).stream().filter(RibbitEntity::getPlayingInstrument).forEach((ribbit) -> {
             if (ribbit.getMasterRibbit() != null) {
