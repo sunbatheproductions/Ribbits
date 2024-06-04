@@ -90,6 +90,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private static final RawAnimation FISH = RawAnimation.begin().thenPlay("fishing");
     private static final RawAnimation FISH_HOLDING = RawAnimation.begin().thenPlay("fishing_holding");
     private static final RawAnimation WATER_CROPS = RawAnimation.begin().thenPlay("water_crops");
+    private static final RawAnimation WATER_CROPS_HOLDING = RawAnimation.begin().thenPlay("water_crops_holding");
 
     @Nullable
     private Player tradingPlayer;
@@ -522,7 +523,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         } else if (getFishing()) {
             state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? FISH_HOLDING : FISH);
         } else if (getWatering()) {
-            state.getController().setAnimation(WATER_CROPS);
+            state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WATER_CROPS_HOLDING: WATER_CROPS);
         } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
             if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
                 state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
