@@ -3,29 +3,40 @@ package com.yungnickyoung.minecraft.ribbits.entity.goal;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RibbitApplyBuffGoal extends Goal {
+    private static final int TICKS_UNTIL_BUFF_APPLIED = 22;
+
     private final RibbitEntity ribbit;
     private final double range;
-    private final int effectDuration;
     private final int cooldownTicks;
-    private final int ticksToApplyBuff;
-    private final List<MobEffect> effects;
 
-    private int applyBuffTicks;
+    /**
+     * Map of effects to duration, in ticks.
+     */
+    private final Map<MobEffect, Integer> effects;
 
-    public RibbitApplyBuffGoal(RibbitEntity ribbit, double range, int effectDuration, int cooldownTicks, int ticksToApplyBuff, MobEffect... effects) {
+    private int ticksSinceStart;
+
+    public RibbitApplyBuffGoal(RibbitEntity ribbit, double range, int cooldownTicks) {
         this.ribbit = ribbit;
         this.range = range;
-        this.effectDuration = effectDuration;
         this.cooldownTicks = cooldownTicks;
-        this.ticksToApplyBuff = ticksToApplyBuff;
-        this.effects = List.of(effects);
+        this.effects = new HashMap<>();
+        this.effects.put(MobEffects.REGENERATION, 1200);
+        this.effects.put(MobEffects.DAMAGE_RESISTANCE, 2400);
+        this.effects.put(MobEffects.DAMAGE_BOOST, 2400);
+        this.effects.put(MobEffects.JUMP, 2400);
+        this.effects.put(MobEffects.DIG_SPEED, 2400);
+        this.effects.put(MobEffects.HEALTH_BOOST, 2400);
     }
 
     @Override
@@ -35,7 +46,7 @@ public class RibbitApplyBuffGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.applyBuffTicks >= 0;
+        return this.ticksSinceStart >= 0;
     }
 
     @Override
@@ -45,33 +56,34 @@ public class RibbitApplyBuffGoal extends Goal {
 
     @Override
     public void tick() {
-        if (this.applyBuffTicks >= this.ticksToApplyBuff) {
+        if (this.ticksSinceStart >= TICKS_UNTIL_BUFF_APPLIED) {
             this.applyBuffs();
-        } else if (this.applyBuffTicks >= 0) {
-            this.applyBuffTicks++;
+        } else if (this.ticksSinceStart >= 0) {
+            this.ticksSinceStart++;
         }
     }
 
     @Override
     public void start() {
-        this.applyBuffTicks = 0;
+        this.ticksSinceStart = 0;
         this.ribbit.setBuffing(true);
     }
 
     @Override
     public void stop() {
         this.ribbit.setBuffCooldown(this.cooldownTicks);
-        this.applyBuffTicks = 0;
+        this.ticksSinceStart = 0;
     }
 
     private void applyBuffs() {
-        this.applyBuffTicks = -1;
+        this.ticksSinceStart = -1;
 
         List<Player> nearbyPlayers = this.ribbit.level().getNearbyPlayers(TargetingConditions.forCombat().range(this.range), this.ribbit, this.ribbit.getBoundingBox().inflate(this.range, 5.0d, this.range));
 
-        MobEffect randomEffect = this.effects.get(this.ribbit.getRandom().nextInt(this.effects.size()));
+        MobEffect randomEffect = this.effects.keySet().stream().toList().get(this.ribbit.getRandom().nextInt(this.effects.size()));
+        int effectDuration = this.effects.get(randomEffect);
         for (Player player : nearbyPlayers) {
-            player.addEffect(new MobEffectInstance(randomEffect, this.effectDuration, 0));
+            player.addEffect(new MobEffectInstance(randomEffect, effectDuration, 0));
         }
 
         this.ribbit.setBuffing(false);
