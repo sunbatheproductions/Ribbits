@@ -47,7 +47,7 @@ public class RibbitApplyBuffGoal extends Goal {
     public void tick() {
         if (this.applyBuffTicks >= this.ticksToApplyBuff) {
             this.applyBuffs();
-        } else {
+        } else if (this.applyBuffTicks >= 0) {
             this.applyBuffTicks++;
         }
     }
