@@ -14,6 +14,7 @@ import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitPlayMusicGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStrollGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitWaterCropsGoal;
 import com.yungnickyoung.minecraft.ribbits.module.EntityDataSerializerModule;
+import com.yungnickyoung.minecraft.ribbits.entity.trade.ItemListing;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitProfessionModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitTradeModule;
@@ -657,7 +658,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
     protected void updateTrades() {
         RibbitData ribbitData = this.getRibbitData();
-        RibbitTradeModule.ItemListing[] itemListings = RibbitTradeModule.TRADES.get(ribbitData.getProfession());
+        ItemListing[] itemListings = RibbitTradeModule.TRADES.get(ribbitData.getProfession());
 
         if (itemListings == null || itemListings.length == 0) {
             return;
@@ -667,10 +668,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.addOffersFromItemListings(merchantOffers, itemListings, 4);
     }
 
-    protected void addOffersFromItemListings(MerchantOffers merchantOffers, RibbitTradeModule.ItemListing[] itemListings, int i) {
+    protected void addOffersFromItemListings(MerchantOffers merchantOffers, ItemListing[] itemListings, int numOffers) {
         HashSet<Integer> set = Sets.newHashSet();
-        if (itemListings.length > i) {
-            while (set.size() < i) {
+        if (itemListings.length > numOffers) {
+            while (set.size() < numOffers) {
                 set.add(this.random.nextInt(itemListings.length));
             }
         } else {
@@ -679,10 +680,15 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             }
         }
         for (Integer integer : set) {
-            RibbitTradeModule.ItemListing itemListing = itemListings[integer];
+            ItemListing itemListing = itemListings[integer];
             MerchantOffer merchantOffer = itemListing.getOffer(this, this.random);
             if (merchantOffer == null) continue;
             merchantOffers.add(merchantOffer);
+        }
+
+        // Merchants always have a maraca trade
+        if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.MERCHANT)) {
+            merchantOffers.add(RibbitTradeModule.MARACA_TRADE.getOffer(this, this.random));
         }
     }
 
