@@ -105,7 +105,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private long lastRestockCheckDayTime;
 
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
-    private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 100);
+    private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 100, 600);
     private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d);
     private final RibbitApplyBuffGoal applyBuffGoal = new RibbitApplyBuffGoal(this, 16.0d, 100, 600, 22, MobEffects.REGENERATION, MobEffects.DAMAGE_RESISTANCE, MobEffects.DAMAGE_BOOST, MobEffects.JUMP, MobEffects.DIG_SPEED, MobEffects.HEALTH_BOOST);
 
@@ -140,6 +140,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private RibbitEntity masterRibbit;
 
     private int buffCooldown = 0;
+    private int waterCropsCooldown = 0;
 
     public RibbitEntity(EntityType<RibbitEntity> entityType, Level level) {
         super(entityType, level);
@@ -178,6 +179,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
             if (this.buffCooldown > 0) {
                 this.buffCooldown--;
+            }
+
+            if (this.waterCropsCooldown > 0) {
+                this.waterCropsCooldown--;
             }
 
             if (this.shouldRestock()) {
@@ -363,6 +368,14 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
     public void setBuffCooldown(int cooldown) {
         this.buffCooldown = cooldown;
+    }
+
+    public int getWaterCropsCooldown() {
+        return this.waterCropsCooldown;
+    }
+
+    public void setWaterCropsCooldown(int cooldown) {
+        this.waterCropsCooldown = cooldown;
     }
 
     public RibbitData getRibbitData() {

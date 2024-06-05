@@ -17,14 +17,16 @@ public class RibbitWaterCropsGoal extends Goal {
     private final RibbitEntity ribbit;
     private final double range;
     private final int averageTickToWater;
+    private final int cooldownTicks;
 
     private BlockPos waterPos;
     private int wateringTicks = 0;
 
-    public RibbitWaterCropsGoal(RibbitEntity ribbit, double range, int averageTicksToWater) {
+    public RibbitWaterCropsGoal(RibbitEntity ribbit, double range, int averageTicksToWater, int cooldownTicks) {
         this.ribbit = ribbit;
         this.range = range;
         this.averageTickToWater = averageTicksToWater;
+        this.cooldownTicks = cooldownTicks;
 
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
@@ -39,6 +41,8 @@ public class RibbitWaterCropsGoal extends Goal {
         this.wateringTicks = 0;
         this.ribbit.setWatering(false);
         this.waterPos = null;
+
+        this.ribbit.setBuffCooldown(this.cooldownTicks);
     }
 
     @Override
@@ -49,7 +53,7 @@ public class RibbitWaterCropsGoal extends Goal {
 
         Optional<BlockPos> cropPos = BlockPos.findClosestMatch(this.ribbit.getOnPos(), (int) range, 5, blockpos -> {
             if (this.ribbit.level().getBlockState(blockpos).getBlock() instanceof CropBlock cropBlock) {
-                return !cropBlock.isMaxAge(this.ribbit.level().getBlockState(blockpos));
+                return this.ribbit.getBuffCooldown() == 0 && !cropBlock.isMaxAge(this.ribbit.level().getBlockState(blockpos));
             } else {
                 return false;
             }
@@ -57,11 +61,15 @@ public class RibbitWaterCropsGoal extends Goal {
 
         cropPos.ifPresent(blockPos -> this.waterPos = blockPos);
 
-        return cropPos.isPresent();
+        return this.ribbit.getBuffCooldown() == 0 && cropPos.isPresent();
     }
 
     @Override
     public boolean canContinueToUse() {
+        if (this.wateringTicks < 0) {
+            return false;
+        }
+
         Iterable<BlockPos> nearbyPositions = BlockPos.betweenClosed(Mth.floor(this.ribbit.getX() - 2.0), Mth.floor(this.ribbit.getY() - 2.0), Mth.floor(this.ribbit.getZ() - 2.0), Mth.floor(this.ribbit.getX() + 2.0), this.ribbit.getBlockY(), Mth.floor(this.ribbit.getZ() + 2.0));
 
         boolean cropNearby = false;
@@ -82,6 +90,10 @@ public class RibbitWaterCropsGoal extends Goal {
 
     @Override
     public void tick() {
+        if (this.wateringTicks < 0) {
+            return;
+        }
+
         if (this.ribbit.distanceToSqr(this.waterPos.getX(), this.waterPos.getY(), this.waterPos.getZ()) <= 2.0) {
             this.ribbit.setWatering(true);
             this.wateringTicks++;
@@ -93,6 +105,8 @@ public class RibbitWaterCropsGoal extends Goal {
                     growCrop(this.ribbit.level(), pos);
                     ((ServerLevel) this.ribbit.level()).sendParticles(ParticleTypes.FALLING_WATER, pos.getX(), pos.getY() + 0.6d, pos.getZ(), 8, 0.0d, 0.0d, 0.0d, 0.0d);
                 }
+
+                this.wateringTicks = -1;
             }
         } else {
             this.ribbit.setWatering(false);
