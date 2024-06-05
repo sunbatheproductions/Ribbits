@@ -563,36 +563,41 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         return month == 6;
     }
 
+    public boolean isInRain() {
+        BlockPos pos = this.blockPosition();
+        return this.level().isRainingAt(pos) || this.level().isRainingAt(BlockPos.containing(pos.getX(), this.getBoundingBox().maxY, pos.getZ()));
+    }
+
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> state) {
         if (this.getUmbrellaFalling()) {
             state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit() ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
         } else if (getPlayingInstrument() && this.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
             state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
         } else if (getBuffing()) {
-            state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? SORCERER_BUFF_HOLDING : SORCERER_BUFF);
+            state.getController().setAnimation(this.isInRain() ? SORCERER_BUFF_HOLDING : SORCERER_BUFF);
         } else if (getFishing()) {
-            state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? FISH_HOLDING : FISH);
+            state.getController().setAnimation(this.isInRain() ? FISH_HOLDING : FISH);
         } else if (getWatering()) {
-            state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WATER_CROPS_HOLDING: WATER_CROPS);
+            state.getController().setAnimation(this.isInRain() ? WATER_CROPS_HOLDING: WATER_CROPS);
         } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
             if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
-                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
+                state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
             } else if (this.isPrideRibbit()) {
                 state.getController().setAnimation(WALK_HOLDING_2);
             } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
-                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_HAT : WALK);
+                state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_HAT : WALK);
             } else {
-                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? WALK_HOLDING_1 : WALK);
+                state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_1 : WALK);
             }
           } else {
             if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
-                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_FISHERMAN : IDLE_HOLDING_2);
+                state.getController().setAnimation(this.isInRain() ? IDLE_HOLDING_FISHERMAN : IDLE_HOLDING_2);
             } else if (this.isPrideRibbit()) {
                 state.getController().setAnimation(IDLE_HOLDING_2);
             } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
-                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_HAT : IDLE);
+                state.getController().setAnimation(this.isInRain() ? IDLE_HOLDING_HAT : IDLE);
             } else {
-                state.getController().setAnimation(this.level().isRaining() && this.isInWaterOrRain() && !this.isInWater() ? IDLE_HOLDING_1 : IDLE);
+                state.getController().setAnimation(this.isInRain() ? IDLE_HOLDING_1 : IDLE);
             }
         }
         return PlayState.CONTINUE;
