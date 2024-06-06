@@ -105,7 +105,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private long lastRestockCheckDayTime;
 
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
-    private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 100, 600);
+    private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 34, 600);
     private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d);
     private final RibbitApplyBuffGoal applyBuffGoal = new RibbitApplyBuffGoal(this, 32.0d, 12000);
 
