@@ -104,7 +104,8 @@ public class RibbitPlayMusicGoal extends Goal {
 
     @Override
     public boolean isInterruptable() {
-        return this.ribbit.getTicksPlayingMusic() > this.requiredPlayTicks;
+        return (this.ribbit.getLastHurtByMob() != null || this.ribbit.isFreezing() || this.ribbit.isOnFire()) ||
+                this.ribbit.getTicksPlayingMusic() > this.requiredPlayTicks;
     }
 
     @Override

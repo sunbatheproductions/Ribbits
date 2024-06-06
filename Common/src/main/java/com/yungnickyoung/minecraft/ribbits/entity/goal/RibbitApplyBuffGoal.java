@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class RibbitApplyBuffGoal extends Goal {
         this.effects.put(MobEffects.JUMP, 2400);
         this.effects.put(MobEffects.DIG_SPEED, 2400);
         this.effects.put(MobEffects.HEALTH_BOOST, 2400);
+
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override

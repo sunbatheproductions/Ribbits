@@ -6,6 +6,8 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
+
 public class RibbitStrollGoal extends RandomStrollGoal {
     private final int dayHomeRange;
     private final RibbitEntity ribbit;
@@ -14,6 +16,8 @@ public class RibbitStrollGoal extends RandomStrollGoal {
         super(mob, speedModifier);
         this.ribbit = mob;
         this.dayHomeRange = dayHomeRange;
+
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     public RibbitStrollGoal(RibbitEntity mob, double speedModifier, int interval, int dayHomeRange) {

@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 
+import java.util.EnumSet;
+
 public class RibbitGoHomeGoal extends Goal {
     private final RibbitEntity ribbit;
     private final int homePointRange;
@@ -16,6 +18,8 @@ public class RibbitGoHomeGoal extends Goal {
         this.homePointRange = homePointRange;
         this.speedModifier = speedModifier;
         this.interval = interval;
+
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
