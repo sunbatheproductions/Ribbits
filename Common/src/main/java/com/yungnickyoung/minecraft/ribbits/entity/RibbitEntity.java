@@ -542,7 +542,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public static AttributeSupplier.Builder createRibbitAttributes() {
         return createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 15.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.MOVEMENT_SPEED, 0.125D)
                 .add(Attributes.ATTACK_DAMAGE, 1.0D);
     }
 
@@ -598,7 +598,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             state.getController().setAnimation(this.isInRain() ? FISH_HOLDING : FISH);
         } else if (getWatering()) {
             state.getController().setAnimation(this.isInRain() ? WATER_CROPS_HOLDING: WATER_CROPS);
-        } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
+        } else if (state.isMoving()) {
             if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
                 state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
             } else if (this.isPrideRibbit()) {

@@ -40,6 +40,6 @@ public class RibbitRenderer extends GeoEntityRenderer<RibbitEntity> {
 
     @Override
     public float getMotionAnimThreshold(RibbitEntity animatable) {
-        return 0.005f;
+        return 0.0005f;
     }
 }
