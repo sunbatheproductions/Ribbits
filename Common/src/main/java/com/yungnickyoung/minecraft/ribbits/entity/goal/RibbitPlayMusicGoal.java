@@ -7,6 +7,7 @@ import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.services.Services;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
@@ -193,7 +194,7 @@ public class RibbitPlayMusicGoal extends Goal {
                 Set<Player> playersHearingMusic = new HashSet<>(this.ribbit.getPlayersHearingMusic());
 
                 // Add any new players in range
-                List<Player> playersInRange = this.ribbit.level().getEntitiesOfClass(Player.class, this.ribbit.getBoundingBox().inflate(32.0, 32.0, 32.0));
+                List<Player> playersInRange = this.ribbit.level().getEntitiesOfClass(Player.class, this.ribbit.getBoundingBox().inflate(32.0, 32.0, 32.0), EntitySelector.LIVING_ENTITY_STILL_ALIVE);
                 for (Player player : playersInRange) {
                     if (!playersHearingMusic.contains(player)) {
 //                    RibbitsCommon.LOGGER.info("Starting music for " + player.getName().getString());
