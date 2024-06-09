@@ -498,7 +498,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         }
 
         this.getRibbitsPlayingMusic().clear();
-        this.getPlayersHearingMusic().clear();;
+        this.getPlayersHearingMusic().clear();
         this.setTicksPlayingMusic(0);
         this.clearBandMembers();
     }
