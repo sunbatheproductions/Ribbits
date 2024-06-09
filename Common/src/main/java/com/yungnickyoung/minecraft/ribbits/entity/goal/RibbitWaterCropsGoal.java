@@ -16,7 +16,7 @@ import java.util.Optional;
 public class RibbitWaterCropsGoal extends Goal {
     private final RibbitEntity ribbit;
     private final double range;
-    private final int averageTickToWater;
+    private final int ticksToWater;
     private final int cooldownTicks;
 
     private BlockPos waterPos;
@@ -25,7 +25,7 @@ public class RibbitWaterCropsGoal extends Goal {
     public RibbitWaterCropsGoal(RibbitEntity ribbit, double range, int averageTicksToWater, int cooldownTicks) {
         this.ribbit = ribbit;
         this.range = range;
-        this.averageTickToWater = averageTicksToWater;
+        this.ticksToWater = averageTicksToWater;
         this.cooldownTicks = cooldownTicks;
 
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -84,6 +84,11 @@ public class RibbitWaterCropsGoal extends Goal {
     }
 
     @Override
+    public boolean isInterruptable() {
+        return this.wateringTicks <= 0;
+    }
+
+    @Override
     public boolean requiresUpdateEveryTick() {
         return true;
     }
@@ -98,7 +103,7 @@ public class RibbitWaterCropsGoal extends Goal {
             this.ribbit.setWatering(true);
             this.wateringTicks++;
 
-            if (this.wateringTicks % this.averageTickToWater == 0) {
+            if (this.wateringTicks % this.ticksToWater == 0) {
                 Iterable<BlockPos> nearbyPositions = BlockPos.betweenClosed(Mth.floor(this.ribbit.getX() - 2.0), Mth.floor(this.ribbit.getY() - 2.0), Mth.floor(this.ribbit.getZ() - 2.0), Mth.floor(this.ribbit.getX() + 2.0), this.ribbit.getBlockY(), Mth.floor(this.ribbit.getZ() + 2.0));
 
                 for (BlockPos pos : nearbyPositions) {

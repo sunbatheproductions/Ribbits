@@ -105,8 +105,8 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private long lastRestockCheckDayTime;
 
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
-    private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 100, 600);
-    private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d);
+    private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 34, 600);
+    private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d, 60, 100);
     private final RibbitApplyBuffGoal applyBuffGoal = new RibbitApplyBuffGoal(this, 32.0d, 12000);
 
     private static final EntityDataAccessor<RibbitData> RIBBIT_DATA = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializerModule.RIBBIT_DATA_SERIALIZER);
@@ -356,6 +356,11 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         }
     }
 
+    @Override
+    public double getMyRidingOffset() {
+        return 0.3d;
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob parent) {
@@ -537,7 +542,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public static AttributeSupplier.Builder createRibbitAttributes() {
         return createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 15.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.MOVEMENT_SPEED, 0.125D)
                 .add(Attributes.ATTACK_DAMAGE, 1.0D);
     }
 
@@ -593,7 +598,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             state.getController().setAnimation(this.isInRain() ? FISH_HOLDING : FISH);
         } else if (getWatering()) {
             state.getController().setAnimation(this.isInRain() ? WATER_CROPS_HOLDING: WATER_CROPS);
-        } else if (state.getLimbSwingAmount() > 0.15D || state.getLimbSwingAmount() < -0.15D) {
+        } else if (state.isMoving()) {
             if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
                 state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
             } else if (this.isPrideRibbit()) {
