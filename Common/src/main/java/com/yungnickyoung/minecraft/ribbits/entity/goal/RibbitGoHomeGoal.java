@@ -1,17 +1,17 @@
 package com.yungnickyoung.minecraft.ribbits.entity.goal;
 
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.phys.Vec3;
 
 public class RibbitGoHomeGoal extends Goal {
     private final RibbitEntity ribbit;
-    private final int homePointRange;
+    private final float homePointRange;
     private final float speedModifier;
     private final int interval;
 
-    public RibbitGoHomeGoal(RibbitEntity ribbit, int homePointRange, float speedModifier, int interval) {
+    public RibbitGoHomeGoal(RibbitEntity ribbit, float homePointRange, float speedModifier, int interval) {
         this.ribbit = ribbit;
         this.homePointRange = homePointRange;
         this.speedModifier = speedModifier;
@@ -37,14 +37,14 @@ public class RibbitGoHomeGoal extends Goal {
 
     @Override
     public void start() {
-        BlockPos distanceVariance = new BlockPos(this.ribbit.getRandom().nextInt(this.homePointRange * 2) - this.homePointRange,
-                this.ribbit.getRandom().nextInt(this.homePointRange * 2) - this.homePointRange,
-                this.ribbit.getRandom().nextInt(this.homePointRange * 2) - this.homePointRange);
+        Vec3 distanceVariance = new Vec3(
+                this.ribbit.getRandom().nextFloat() * this.homePointRange * 2 - this.homePointRange,
+                this.ribbit.getRandom().nextFloat() * this.homePointRange * 2 - this.homePointRange,
+                this.ribbit.getRandom().nextFloat() * this.homePointRange * 2 - this.homePointRange);
 
-
-        this.ribbit.getNavigation().moveTo(distanceVariance.getX() + this.ribbit.getHomePosition().getX(),
-                distanceVariance.getY() + this.ribbit.getHomePosition().getY(),
-                distanceVariance.getZ() + this.ribbit.getHomePosition().getZ(), this.speedModifier);
+        this.ribbit.getNavigation().moveTo(distanceVariance.x() + this.ribbit.getHomePosition().getX(),
+                distanceVariance.y() + this.ribbit.getHomePosition().getY(),
+                distanceVariance.z() + this.ribbit.getHomePosition().getZ(), this.speedModifier);
     }
 
     @Override
