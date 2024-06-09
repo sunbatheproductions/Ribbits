@@ -2,9 +2,12 @@ package com.yungnickyoung.minecraft.ribbits.entity.goal;
 
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.EnumSet;
 import java.util.Optional;
@@ -56,20 +59,30 @@ public class RibbitFishGoal extends Goal {
             return false;
         }
 
-        Optional<BlockPos> waterPos = BlockPos.findClosestMatch(this.ribbit.getOnPos(), (int) range, 5, blockpos -> this.ribbit.level().getFluidState(blockpos).is(FluidTags.WATER));
+        Optional<BlockPos> waterPos = BlockPos.findClosestMatch(this.ribbit.getOnPos(), (int) range, 5, blockpos -> this.ribbit.level().getFluidState(blockpos).is(FluidTags.WATER) && this.ribbit.level().getBlockState(blockpos.above()).is(Blocks.AIR));
         
-        Optional<BlockPos> nearestDryPos;
+        this.dryPos = null;
                 
         if (waterPos.isPresent()) {
             this.waterPos = waterPos.get();
-            nearestDryPos = BlockPos.findClosestMatch(waterPos.get(), 1, 1, blockPos1 -> !this.ribbit.level().getFluidState(blockPos1).is(FluidTags.WATER) && !this.ribbit.level().getFluidState(blockPos1.above()).is(FluidTags.WATER));
+
+            for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(this.ribbit.getRandom())) {
+                BlockPos testedDryPos = this.waterPos.relative(dir);
+
+                if (this.ribbit.level().getBlockState(testedDryPos.above()).is(Blocks.AIR) && Block.isFaceFull(this.ribbit.level().getBlockState(testedDryPos).getCollisionShape(this.ribbit.level(), testedDryPos), Direction.UP)) {
+                    this.dryPos = testedDryPos;
+                    break;
+                }
+            }
         } else {
             return false;
         }
 
-        nearestDryPos.ifPresent(dryPos -> this.dryPos = dryPos.above());
+        if (this.dryPos == null) {
+            return false;
+        }
 
-        return nearestDryPos.isPresent() && this.ribbit.level().getDayTime() <= 18000 && this.ribbit.level().getDayTime() >= 1000;
+        return this.ribbit.level().isDay();
     }
 
     @Override
@@ -92,7 +105,7 @@ public class RibbitFishGoal extends Goal {
         if (this.ribbit.distanceToSqr(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f) <= 0.6f * 0.6f) {
             this.ticksFishing++;
             this.ribbit.setFishing(true);
-            this.ribbit.getLookControl().setLookAt(this.waterPos.getX(), this.waterPos.getY(), this.waterPos.getZ());
+            this.ribbit.getLookControl().setLookAt(this.waterPos.getX() + 0.5f, this.ribbit.getEyeY(), this.waterPos.getZ() + 0.5f);
         } else {
             this.ribbit.setFishing(false);
             this.ribbit.getMoveControl().setWantedPosition(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f, 2.0f);

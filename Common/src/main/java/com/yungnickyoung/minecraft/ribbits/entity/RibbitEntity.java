@@ -361,6 +361,16 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         return 0.3d;
     }
 
+    @Override
+    public int getMaxHeadXRot() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return 0;
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob parent) {
