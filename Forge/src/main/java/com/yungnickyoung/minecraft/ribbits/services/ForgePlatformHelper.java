@@ -41,7 +41,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
         // If this ribbit is the master ribbit, use its stored tick value, since there is no existing ticking sound to grab the byte offset from.
         // Otherwise, use -1 to indicate that the client should use a byte offset instead, which will be fetched from the existing ticking sound.
         int tickOffset = newRibbit.equals(masterRibbit) ? masterRibbit.getTicksPlayingMusic() : -1;
-        NetworkModuleForge.sendToAllClients(new RibbitMusicStartSingleS2CPacket(newRibbit.getUUID(), tickOffset));
+        NetworkModuleForge.sendToAllClients(new RibbitMusicStartSingleS2CPacket(newRibbit.getUUID(), newRibbit.getRibbitData().getInstrument().getId(), tickOffset));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.yungnickyoung.minecraft.ribbits.util;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,22 @@ public class BufferUtils {
         buf.writeInt(list.size());
         for (UUID uuid : list) {
             buf.writeUUID(uuid);
+        }
+    }
+
+    public static List<ResourceLocation> readResourceLocationList(FriendlyByteBuf buf) {
+        int size = buf.readInt();
+        List<ResourceLocation> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(buf.readResourceLocation());
+        }
+        return list;
+    }
+
+    public static void writeResourceLocationList(List<ResourceLocation> list, FriendlyByteBuf buf) {
+        buf.writeInt(list.size());
+        for (ResourceLocation resourceLocation : list) {
+            buf.writeResourceLocation(resourceLocation);
         }
     }
 }

@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +29,8 @@ public class ClientPacketHandlerFabric {
                                           PacketSender responseSender) {
         UUID entityId = buf.readUUID();
         RibbitEntity ribbit = (RibbitEntity) ((ClientLevelAccessor) client.level).callGetEntities().get(entityId);
+
+        RibbitInstrument instrument = RibbitInstrumentModule.getInstrument(buf.readResourceLocation());
         int tickOffset = buf.readInt();
 
         if (ribbit == null) {
@@ -35,7 +38,11 @@ public class ClientPacketHandlerFabric {
             return;
         }
 
-        RibbitInstrument instrument = ribbit.getRibbitData().getInstrument();
+        if (instrument == null) {
+            RibbitsCommon.LOGGER.error("Tried to play music for a ribbit with null instrument!");
+            return;
+        }
+
         if (instrument == RibbitInstrumentModule.NONE) {
             RibbitsCommon.LOGGER.error("Tried to play music for a ribbit with NONE instrument!");
             return;
@@ -52,16 +59,27 @@ public class ClientPacketHandlerFabric {
                                        FriendlyByteBuf buf,
                                        PacketSender responseSender) {
         List<UUID> entityIds = BufferUtils.readUUIDList(buf);
+        List<ResourceLocation> instrumentIds = BufferUtils.readResourceLocationList(buf);
         int tickOffset = buf.readInt();
 
-        for (UUID id : entityIds) {
-            RibbitEntity ribbit = (RibbitEntity) ((ClientLevelAccessor) client.level).callGetEntities().get(id);
+        if (entityIds.size() != instrumentIds.size()) {
+            RibbitsCommon.LOGGER.error("Received Start Music All packet with {} ribbits and {} instruments!", entityIds.size(), instrumentIds.size());
+            return;
+        }
+
+        for (int i = 0; i < entityIds.size(); i++) {
+            RibbitEntity ribbit = (RibbitEntity) ((ClientLevelAccessor) client.level).callGetEntities().get(entityIds.get(i));
             if (ribbit == null) {
-                RibbitsCommon.LOGGER.error("Received Start Music All packet for a ribbit with UUID {} that doesn't exist!", id);
+                RibbitsCommon.LOGGER.error("Received Start Music All packet for a ribbit with UUID {} that doesn't exist!", entityIds.get(i));
                 return;
             }
 
-            RibbitInstrument instrument = ribbit.getRibbitData().getInstrument();
+            RibbitInstrument instrument = RibbitInstrumentModule.getInstrument(instrumentIds.get(i));
+            if (instrument == null) {
+                RibbitsCommon.LOGGER.error("Tried to play music in receiveStartAll for a ribbit with null instrument!");
+                return;
+            }
+
             if (instrument == RibbitInstrumentModule.NONE) {
                 RibbitsCommon.LOGGER.error("Tried to play music in receiveStartAll for a ribbit with NONE instrument!");
                 return;
