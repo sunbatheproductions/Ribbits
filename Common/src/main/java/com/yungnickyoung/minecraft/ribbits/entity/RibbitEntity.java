@@ -13,8 +13,8 @@ import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitGoHomeGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitPlayMusicGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStrollGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitWaterCropsGoal;
-import com.yungnickyoung.minecraft.ribbits.module.EntityDataSerializerModule;
 import com.yungnickyoung.minecraft.ribbits.entity.trade.ItemListing;
+import com.yungnickyoung.minecraft.ribbits.module.EntityDataSerializerModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitProfessionModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitTradeModule;
@@ -35,7 +35,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -106,7 +105,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
     private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 8.0d, 34, 600);
-    private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d, 60, 100);
+    private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d, 600, 1800);
     private final RibbitApplyBuffGoal applyBuffGoal = new RibbitApplyBuffGoal(this, 32.0d, 12000);
 
     private static final EntityDataAccessor<RibbitData> RIBBIT_DATA = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializerModule.RIBBIT_DATA_SERIALIZER);
