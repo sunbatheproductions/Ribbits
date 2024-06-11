@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.ribbits.player;
 
+import com.yungnickyoung.minecraft.ribbits.module.ItemModule;
 import com.yungnickyoung.minecraft.ribbits.services.Services;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +26,7 @@ public class PlayerInstrumentTracker {
     private static void updateAudienceForPerformer(Player performer) {
         Set<Player> audienceMembers = new HashSet<>(performerToAudienceMap.get(performer));
 
-        if (performer.isRemoved()) {
+        if (performer.isRemoved() || !performer.getItemInHand(performer.getUsedItemHand()).is(ItemModule.MARACA.get())) {
             removePerformer(performer);
             return;
         }

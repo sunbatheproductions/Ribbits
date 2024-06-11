@@ -1,8 +1,10 @@
 package com.yungnickyoung.minecraft.ribbits.services;
 
+import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.function.Supplier;
@@ -47,4 +49,6 @@ public interface IPlatformHelper {
     void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember);
 
     Supplier<Block> getGiantLilyPadBlock();
+
+    Supplier<Item> getRibbitSpawnEggItem(RibbitProfession profession, int backgroundColor, int highlightColor);
 }

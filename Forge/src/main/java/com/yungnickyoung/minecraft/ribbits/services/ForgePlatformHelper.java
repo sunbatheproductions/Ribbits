@@ -1,7 +1,10 @@
 package com.yungnickyoung.minecraft.ribbits.services;
 
 import com.yungnickyoung.minecraft.ribbits.block.GiantLilyPadBlockForge;
+import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
+import com.yungnickyoung.minecraft.ribbits.item.RibbitSpawnEggItemForge;
+import com.yungnickyoung.minecraft.ribbits.module.EntityTypeModule;
 import com.yungnickyoung.minecraft.ribbits.module.NetworkModuleForge;
 import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStartS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStopS2CPacket;
@@ -10,6 +13,7 @@ import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartSingleS2CPack
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStopSingleS2CPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -79,5 +83,11 @@ public class ForgePlatformHelper implements IPlatformHelper {
                         .sound(SoundType.LILY_PAD)
                         .noOcclusion()
                         .pushReaction(PushReaction.DESTROY));
+    }
+
+    @Override
+    public Supplier<Item> getRibbitSpawnEggItem(RibbitProfession profession, int backgroundColor, int highlightColor) {
+        return () -> new RibbitSpawnEggItemForge(
+                EntityTypeModule.RIBBIT.get(), profession, backgroundColor, highlightColor, new Item.Properties());
     }
 }
