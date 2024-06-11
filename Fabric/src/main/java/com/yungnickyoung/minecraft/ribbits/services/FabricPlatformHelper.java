@@ -1,7 +1,10 @@
 package com.yungnickyoung.minecraft.ribbits.services;
 
 import com.yungnickyoung.minecraft.ribbits.block.GiantLilyPadBlock;
+import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
+import com.yungnickyoung.minecraft.ribbits.item.RibbitSpawnEggItemFabric;
+import com.yungnickyoung.minecraft.ribbits.module.EntityTypeModule;
 import com.yungnickyoung.minecraft.ribbits.module.NetworkModuleFabric;
 import com.yungnickyoung.minecraft.ribbits.util.BufferUtils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -11,6 +14,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -101,5 +105,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
                         .sound(SoundType.LILY_PAD)
                         .noOcclusion()
                         .pushReaction(PushReaction.DESTROY));
+    }
+
+    @Override
+    public Supplier<Item> getRibbitSpawnEggItem(RibbitProfession profession, int backgroundColor, int highlightColor) {
+        return () -> new RibbitSpawnEggItemFabric(
+                EntityTypeModule.RIBBIT.get(), profession, backgroundColor, highlightColor, new Item.Properties());
     }
 }

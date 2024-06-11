@@ -4,10 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "ribbits.refmap.json",
   "mixins": [
-    "client.accessor.ClientLevelAccessor",
     "accessor.DoorBlockAccessor"
   ],
   "client": [
+    "client.accessor.ClientLevelAccessor",
     "client.accessor.SoundBufferAccessor",
     "client.maraca.ItemInHandRendererMixin",
     "client.maraca.ItemRendererMixin",

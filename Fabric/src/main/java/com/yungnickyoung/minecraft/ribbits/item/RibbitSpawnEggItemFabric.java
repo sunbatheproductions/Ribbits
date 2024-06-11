@@ -30,10 +30,10 @@ import net.minecraft.world.phys.HitResult;
 
 import java.util.Objects;
 
-public class RibbitSpawnEggItem extends SpawnEggItem {
+public class RibbitSpawnEggItemFabric extends SpawnEggItem {
     private final RibbitProfession profession;
 
-    public RibbitSpawnEggItem(EntityType<RibbitEntity> entityType, RibbitProfession profession, int backgroundColor, int highlightColor, Properties properties) {
+    public RibbitSpawnEggItemFabric(EntityType<RibbitEntity> entityType, RibbitProfession profession, int backgroundColor, int highlightColor, Properties properties) {
         super(entityType, backgroundColor, highlightColor, properties);
         this.profession = profession;
     }
