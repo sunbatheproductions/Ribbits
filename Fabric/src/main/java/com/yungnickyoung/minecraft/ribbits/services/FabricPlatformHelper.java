@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
@@ -51,7 +52,9 @@ public class FabricPlatformHelper implements IPlatformHelper {
         int tickOffset = newRibbit.equals(masterRibbit) ? masterRibbit.getTicksPlayingMusic() : -1;
 
         buf.writeUUID(newRibbit.getUUID());
+        buf.writeResourceLocation(newRibbit.getRibbitData().getInstrument().getId());
         buf.writeInt(tickOffset);
+
         PlayerLookup.all(serverLevel.getServer()).forEach(player -> ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_START_MUSIC_SINGLE, buf));
     }
 
@@ -59,12 +62,20 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public void onPlayerEnterBandRange(ServerPlayer player, ServerLevel serverLevel, RibbitEntity masterRibbit) {
         FriendlyByteBuf buf = PacketByteBufs.create();
 
+        List<RibbitEntity> ribbitsPlayingMusic = masterRibbit.getRibbitsPlayingMusic().stream().toList();
+
         List<UUID> ribbitIds = new ArrayList<>();
         ribbitIds.add(masterRibbit.getUUID());
-        ribbitIds.addAll(masterRibbit.getRibbitsPlayingMusic().stream().map(RibbitEntity::getUUID).toList());
+        ribbitIds.addAll(ribbitsPlayingMusic.stream().map(RibbitEntity::getUUID).toList());
+
+        List<ResourceLocation> instrumentIds = new ArrayList<>();
+        instrumentIds.add(masterRibbit.getRibbitData().getInstrument().getId());
+        instrumentIds.addAll(ribbitsPlayingMusic.stream().map((ribbit) -> ribbit.getRibbitData().getInstrument().getId()).toList());
 
         BufferUtils.writeUUIDList(ribbitIds, buf);
+        BufferUtils.writeResourceLocationList(instrumentIds, buf);
         buf.writeInt(masterRibbit.getTicksPlayingMusic());
+
         ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_START_MUSIC_ALL, buf);
     }
 
