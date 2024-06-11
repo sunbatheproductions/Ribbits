@@ -362,6 +362,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         return null;
     }
 
+    public RibbitInstrument getClientInstrument() {
+        return this.clientInstrument;
+    }
+
     public int getBuffCooldown() {
         return this.buffCooldown;
     }
@@ -445,7 +449,6 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public void setRibbitsPlayingMusic(Set<RibbitEntity> ribbitsPlayingMusic) {
         this.ribbitsPlayingMusic = new HashSet<>(ribbitsPlayingMusic);
     }
-
 
     public void addRibbitToPlayingMusic(RibbitEntity ribbit) {
         this.ribbitsPlayingMusic.add(ribbit);
@@ -586,7 +589,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         if (this.getUmbrellaFalling()) {
             state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit() ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
         } else if (getPlayingInstrument() && this.clientInstrument != RibbitInstrumentModule.NONE) {
-            state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
+            state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getClientInstrument().getAnimationName()));
         } else if (getBuffing()) {
             state.getController().setAnimation(this.isInRain() ? SORCERER_BUFF_HOLDING : SORCERER_BUFF);
         } else if (getFishing()) {
