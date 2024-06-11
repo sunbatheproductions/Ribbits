@@ -116,6 +116,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private static final EntityDataAccessor<Boolean> FISHING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BUFFING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
 
+    // Used on client to ensure ribbit can play an instrument on client
+    RibbitInstrument clientInstrument = RibbitInstrumentModule.NONE;
+
+
     // NOTE: Fields below here are used only on Server
     private int ticksPlayingMusic;
 
@@ -192,6 +196,15 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.entityData.define(WATERING, false);
         this.entityData.define(FISHING, false);
         this.entityData.define(BUFFING, false);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+
+        if (RIBBIT_DATA.equals(data)) {
+            this.clientInstrument = this.entityData.get(RIBBIT_DATA).getInstrument();
+        }
     }
 
     @Override
@@ -573,7 +586,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> state) {
         if (this.getUmbrellaFalling()) {
             state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit() ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
-        } else if (getPlayingInstrument() && this.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
+        } else if (getPlayingInstrument() && this.clientInstrument != RibbitInstrumentModule.NONE) {
             state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
         } else if (getBuffing()) {
             state.getController().setAnimation(this.isInRain() ? SORCERER_BUFF_HOLDING : SORCERER_BUFF);
