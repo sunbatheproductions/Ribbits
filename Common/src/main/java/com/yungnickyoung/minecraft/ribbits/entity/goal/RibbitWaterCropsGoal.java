@@ -14,15 +14,19 @@ import java.util.EnumSet;
 import java.util.Optional;
 
 public class RibbitWaterCropsGoal extends Goal {
+    private static final int TICKS_TO_WATER = 34;
+
     private final RibbitEntity ribbit;
     private final double range;
     private final int cooldownTicks;
     private final float speedModifier;
 
-    private BlockPos waterPos;
-    private int wateringTicks = 0;
+    private BlockPos targetCropPos;
 
-    private static final int TICKS_TO_WATER = 34;
+    /**
+     * How long the Ribbit has been performing the watering action/animation
+     */
+    private int wateringTicks = 0;
 
     public RibbitWaterCropsGoal(RibbitEntity ribbit, double range, float speedModifier, int cooldownTicks) {
         this.ribbit = ribbit;
@@ -35,24 +39,22 @@ public class RibbitWaterCropsGoal extends Goal {
 
     @Override
     public void start() {
-        this.ribbit.getMoveControl().setWantedPosition(this.waterPos.getX(), this.waterPos.getY(), this.waterPos.getZ(), this.speedModifier);
+        this.ribbit.getMoveControl().setWantedPosition(this.targetCropPos.getX(), this.targetCropPos.getY(), this.targetCropPos.getZ(), this.speedModifier);
     }
 
     @Override
     public void stop() {
         this.wateringTicks = 0;
         this.ribbit.setWatering(false);
-        this.waterPos = null;
-
+        this.targetCropPos = null;
         this.ribbit.setBuffCooldown(this.cooldownTicks);
     }
 
     @Override
     public boolean canUse() {
-        if (this.ribbit.level().isNight()) {
-            return false;
-        }
+        if (this.ribbit.level().isNight()) return false;
 
+        // Find the closest crop block that isn't fully grown
         Optional<BlockPos> cropPos = BlockPos.findClosestMatch(this.ribbit.getOnPos(), (int) range, 5, blockpos -> {
             if (this.ribbit.level().getBlockState(blockpos).getBlock() instanceof CropBlock cropBlock) {
                 return this.ribbit.getBuffCooldown() == 0 && !cropBlock.isMaxAge(this.ribbit.level().getBlockState(blockpos));
@@ -61,33 +63,29 @@ public class RibbitWaterCropsGoal extends Goal {
             }
         });
 
-        cropPos.ifPresent(blockPos -> this.waterPos = blockPos);
-
+        cropPos.ifPresent(blockPos -> this.targetCropPos = blockPos);
         return this.ribbit.getBuffCooldown() == 0 && cropPos.isPresent();
     }
 
     @Override
     public boolean canContinueToUse() {
-        if (this.wateringTicks < 0) {
-            return false;
-        }
-
-        Iterable<BlockPos> nearbyPositions = BlockPos.betweenClosed(Mth.floor(this.ribbit.getX() - 1.0), Mth.floor(this.ribbit.getY() - 1.0), Mth.floor(this.ribbit.getZ() - 1.0), Mth.floor(this.ribbit.getX() + 1.0), this.ribbit.getBlockY(), Mth.floor(this.ribbit.getZ() + 1.0));
+        // wateringTicks of -1 means the goal has been stopped
+        if (this.wateringTicks < 0) return false;
 
         boolean cropNearby = false;
-        for (BlockPos nearbyPos : nearbyPositions) {
+        for (BlockPos nearbyPos : getNearbyPositions()) {
             if (this.ribbit.level().getBlockState(nearbyPos).getBlock() instanceof CropBlock cropBlock && !cropBlock.isMaxAge(this.ribbit.level().getBlockState(nearbyPos))) {
                 cropNearby = true;
                 break;
             }
         }
 
-        return this.ribbit.distanceToSqr(this.waterPos.getX(), this.waterPos.getY(), this.waterPos.getZ()) > 1.0 || cropNearby;
+        return this.ribbit.distanceToSqr(this.targetCropPos.getX(), this.targetCropPos.getY(), this.targetCropPos.getZ()) > 1.0 || cropNearby || wateringTicks > 0;
     }
 
     @Override
     public boolean isInterruptable() {
-        return this.wateringTicks <= 0;
+        return this.wateringTicks < 0;
     }
 
     @Override
@@ -97,44 +95,53 @@ public class RibbitWaterCropsGoal extends Goal {
 
     @Override
     public void tick() {
+        // If the goal has been stopped, don't do anything
         if (this.wateringTicks < 0) {
             return;
         }
 
-        if (this.ribbit.distanceToSqr(this.waterPos.getX(), this.waterPos.getY(), this.waterPos.getZ()) <= 2.0) {
+        if (this.ribbit.distanceToSqr(this.targetCropPos.getX(), this.targetCropPos.getY() + 0.5, this.targetCropPos.getZ()) <= 2.0) {
+            if (this.wateringTicks == 0) {
+                this.ribbit.getLookControl().setLookAt(this.targetCropPos.getX() + 0.5f, this.ribbit.getEyeY(), this.targetCropPos.getZ() + 0.5f);
+            }
+
             this.ribbit.setWatering(true);
             this.wateringTicks++;
 
             if (this.wateringTicks >= TICKS_TO_WATER) {
-                Iterable<BlockPos> nearbyPositions = BlockPos.betweenClosed(Mth.floor(this.ribbit.getX() - 1.0), Mth.floor(this.ribbit.getY() - 1.0), Mth.floor(this.ribbit.getZ() - 1.0), Mth.floor(this.ribbit.getX() + 1.0), this.ribbit.getBlockY(), Mth.floor(this.ribbit.getZ() + 1.0));
-
-                for (BlockPos pos : nearbyPositions) {
-                    growCrop(this.ribbit.level(), pos);
-                    ((ServerLevel) this.ribbit.level()).sendParticles(ParticleTypes.FALLING_WATER, pos.getX(), pos.getY() + 0.6d, pos.getZ(), 8, 0.0d, 0.0d, 0.0d, 0.0d);
+                for (BlockPos pos : getNearbyPositions()) {
+                    tryGrowCropAtPos(this.ribbit.level(), pos);
                 }
 
-                this.wateringTicks = -1;
+                this.wateringTicks = -1; // Prevents watering again until the goal is stopped
             }
         } else {
             this.ribbit.setWatering(false);
-            this.ribbit.getMoveControl().setWantedPosition(this.waterPos.getX(), this.waterPos.getY(), this.waterPos.getZ(), this.speedModifier);
+            this.ribbit.getNavigation().moveTo(this.targetCropPos.getX(), this.targetCropPos.getY(), this.targetCropPos.getZ(), this.speedModifier);
         }
     }
 
-    public static boolean growCrop(Level level, BlockPos pos) {
-        BlockState block = level.getBlockState(pos);
-        if (block.getBlock() instanceof CropBlock cropBlock) {
-            if (cropBlock.isValidBonemealTarget(level, pos, block, level.isClientSide)) {
-                if (level instanceof ServerLevel) {
-                    if (cropBlock.isBonemealSuccess(level, level.random, pos, block)) {
-                        cropBlock.performBonemeal((ServerLevel)level, level.random, pos, block);
+    private static void tryGrowCropAtPos(Level level, BlockPos pos) {
+        BlockState blockState = level.getBlockState(pos);
+        if (blockState.getBlock() instanceof CropBlock cropBlock) {
+            if (cropBlock.isValidBonemealTarget(level, pos, blockState, level.isClientSide)) {
+                if (level instanceof ServerLevel serverLevel) {
+                    if (cropBlock.isBonemealSuccess(level, level.random, pos, blockState)) {
+                        cropBlock.performBonemeal(serverLevel, level.random, pos, blockState);
+                        serverLevel.sendParticles(ParticleTypes.FALLING_WATER, pos.getX() + 0.5, pos.getY() + 0.6d, pos.getZ() + 0.5, 8, 0.0d, 0.0d, 0.0d, 0.0d);
                     }
                 }
-
-                return true;
             }
         }
+    }
 
-        return false;
+    private Iterable<BlockPos> getNearbyPositions() {
+        return BlockPos.betweenClosed(
+                Mth.floor(this.ribbit.getX() - 1.0),
+                Mth.floor(this.ribbit.getY() - 1.0),
+                Mth.floor(this.ribbit.getZ() - 1.0),
+                Mth.floor(this.ribbit.getX() + 1.0),
+                Mth.floor(this.ribbit.getBlockY() + 1.0),
+                Mth.floor(this.ribbit.getZ() + 1.0));
     }
 }
