@@ -8,11 +8,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 import java.util.Optional;
 
 public class RibbitFishGoal extends Goal {
+    private static final float REQUIRED_DISTANCE_TO_DRY_POS = 0.2f;
+
     private final RibbitEntity ribbit;
     private final double range;
     private final int minRequiredFishTicks;
@@ -22,7 +25,7 @@ public class RibbitFishGoal extends Goal {
     private int requiredFishTicks;
     private int ticksFishing;
     private BlockPos waterPos;
-    private BlockPos dryPos;
+    private Vec3 dryPos;
 
     public RibbitFishGoal(RibbitEntity ribbit, double range, float speedModifier, int minRequiredFishTicks, int maxRequiredFishTicks) {
         this.ribbit = ribbit;
@@ -72,7 +75,11 @@ public class RibbitFishGoal extends Goal {
                 BlockPos testedDryPos = this.waterPos.relative(dir);
 
                 if (this.ribbit.level().getBlockState(testedDryPos.above()).is(Blocks.AIR) && Block.isFaceFull(this.ribbit.level().getBlockState(testedDryPos).getCollisionShape(this.ribbit.level(), testedDryPos), Direction.UP)) {
-                    this.dryPos = testedDryPos;
+                    // Center of the surface of the adjacent dry block
+                    Vec3 dryPosCenter = new Vec3(testedDryPos.getX() + 0.5, testedDryPos.getY() + 1.0, testedDryPos.getZ() + 0.5);
+
+                    // Get a point on the edge of the dry block closest to the water, to ensure the ribbit's fishing line is in the water
+                    this.dryPos = dryPosCenter.add(-dir.getStepX() * 0.25, 0, -dir.getStepZ() * 0.25);
                     break;
                 }
             }
@@ -99,18 +106,18 @@ public class RibbitFishGoal extends Goal {
             }
         }
 
-        return this.ribbit.distanceToSqr(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f) >= 0.6f * 0.6f || waterNearby;
+        return this.ribbit.distanceToSqr(this.dryPos) >= REQUIRED_DISTANCE_TO_DRY_POS * REQUIRED_DISTANCE_TO_DRY_POS || waterNearby;
     }
 
     @Override
     public void tick() {
-        if (this.ribbit.distanceToSqr(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f) <= 0.6f * 0.6f) {
+        if (this.ribbit.distanceToSqr(this.dryPos) <= REQUIRED_DISTANCE_TO_DRY_POS * REQUIRED_DISTANCE_TO_DRY_POS) {
             this.ticksFishing++;
             this.ribbit.setFishing(true);
             this.ribbit.getLookControl().setLookAt(this.waterPos.getX() + 0.5f, this.ribbit.getEyeY(), this.waterPos.getZ() + 0.5f);
         } else {
             this.ribbit.setFishing(false);
-            this.ribbit.getMoveControl().setWantedPosition(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f, this.speedModifier);
+            this.ribbit.getMoveControl().setWantedPosition(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier);
         }
     }
 }
