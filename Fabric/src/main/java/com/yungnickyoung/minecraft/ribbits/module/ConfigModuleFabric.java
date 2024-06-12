@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.ribbits.module;
 
+import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
 import com.yungnickyoung.minecraft.ribbits.config.RibbitsConfigFabric;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
@@ -20,6 +21,6 @@ public class ConfigModuleFabric {
     }
 
     private static void bakeConfig(RibbitsConfigFabric configFabric) {
-        // TODO
+        RibbitsCommon.CONFIG.prideFlagAllYear = configFabric.general.prideFlagAllYear;
     }
 }

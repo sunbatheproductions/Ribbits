@@ -595,6 +595,8 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     private static boolean isPrideMonth() {
+        if (RibbitsCommon.CONFIG.prideFlagAllYear) return true;
+
         LocalDate date = LocalDate.now();
         int month = date.get(ChronoField.MONTH_OF_YEAR);
         return month == 6;

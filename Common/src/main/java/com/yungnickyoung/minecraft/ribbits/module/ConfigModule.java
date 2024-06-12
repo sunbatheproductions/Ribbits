@@ -1,5 +1,5 @@
 package com.yungnickyoung.minecraft.ribbits.module;
 
 public class ConfigModule {
-    // TODO
+    public boolean prideFlagAllYear = false;
 }

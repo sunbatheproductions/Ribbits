@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.ribbits.module;
 
+import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
 import com.yungnickyoung.minecraft.ribbits.config.RibbitsConfigForge;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.level.LevelEvent;
@@ -9,11 +10,8 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ConfigModuleForge {
-    public static final String CUSTOM_CONFIG_PATH = "ribbits";
-    public static final String VERSION_PATH = "forge-1_20_1";
-
     public static void init() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, RibbitsConfigForge.SPEC, "ribbits-forge-1_20_1.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, RibbitsConfigForge.SPEC, "ribbits-forge-" + RibbitsCommon.MC_VERSION_STRING + ".toml");
         MinecraftForge.EVENT_BUS.addListener(ConfigModuleForge::onWorldLoad);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ConfigModuleForge::onConfigChange);
     }
@@ -29,6 +27,6 @@ public class ConfigModuleForge {
     }
 
     private static void bakeConfig() {
-        // TODO
+        RibbitsCommon.CONFIG.prideFlagAllYear = RibbitsConfigForge.general.prideFlagAllYear.get();
     }
 }
