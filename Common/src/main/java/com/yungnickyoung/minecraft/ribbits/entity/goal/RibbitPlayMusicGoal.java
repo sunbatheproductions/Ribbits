@@ -67,7 +67,7 @@ public class RibbitPlayMusicGoal extends Goal {
 
     @Override
     public void start() {
-        this.ribbit.getRibbitData().setInstrument(RibbitInstrumentModule.NONE);
+        this.ribbit.setInstrument(RibbitInstrumentModule.NONE);
 
         if (this.ribbit.getMasterRibbit() != null) {
             this.path = this.ribbit.getNavigation().createPath(this.ribbit.getMasterRibbit(), 0);
@@ -93,9 +93,7 @@ public class RibbitPlayMusicGoal extends Goal {
         this.ribbit.setPlayingInstrument(false);
         this.ribbit.setTicksPlayingMusic(0);
 
-        RibbitData ribbitData = this.ribbit.getRibbitData();
-        ribbitData.setInstrument(RibbitInstrumentModule.NONE);
-        this.ribbit.setRibbitData(ribbitData);
+        this.ribbit.setInstrument(RibbitInstrumentModule.NONE);
     }
 
     @Override
@@ -154,15 +152,13 @@ public class RibbitPlayMusicGoal extends Goal {
         if (!this.ribbit.getPlayingInstrument() && d <= 9.0f) {
             // Set the instrument.
             if (ribbit.getRibbitData().getInstrument() == RibbitInstrumentModule.NONE) {
-                RibbitData ribbitData = this.ribbit.getRibbitData();
                 RibbitInstrument instrument = RibbitInstrumentModule.getRandomInstrument(masterRibbit.getBandMembers());
 
                 if (instrument == null) {
                     return;
                 }
 
-                ribbitData.setInstrument(instrument);
-                this.ribbit.setRibbitData(ribbitData);
+                this.ribbit.setInstrument(instrument);
 
                 this.ribbit.getMasterRibbit().addBandMember(this.ribbit.getRibbitData().getInstrument());
             }
@@ -183,7 +179,7 @@ public class RibbitPlayMusicGoal extends Goal {
             if (d > 9.0f) {
                 this.ribbit.setPlayingInstrument(false);
                 masterRibbit.removeBandMember(this.ribbit.getRibbitData().getInstrument());
-                this.ribbit.getRibbitData().setInstrument(RibbitInstrumentModule.NONE);
+                this.ribbit.setInstrument(RibbitInstrumentModule.NONE);
                 masterRibbit.removeRibbitFromPlayingMusic(this.ribbit);
                 this.ribbit.setTicksPlayingMusic(0);
                 return;

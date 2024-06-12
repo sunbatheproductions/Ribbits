@@ -115,9 +115,13 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private static final EntityDataAccessor<Boolean> FISHING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BUFFING = SynchedEntityData.defineId(RibbitEntity.class, EntityDataSerializers.BOOLEAN);
 
-    // Used on client to ensure ribbit can play an instrument on client
-    RibbitInstrument clientInstrument = RibbitInstrumentModule.NONE;
-
+    // These fields are used to prevent threadlocking by accessing entityData on rendering thread
+    private RibbitData sidedRibbitData = new RibbitData(RibbitProfessionModule.NITWIT, RibbitUmbrellaTypeModule.UMBRELLA_1, RibbitInstrumentModule.NONE);
+    private boolean isPlayingInstrument = false;
+    private boolean isUmbrellaFalling = false;
+    private boolean isWatering = false;
+    private boolean isFishing = false;
+    private boolean isBuffing = false;
 
     // NOTE: Fields below here are used only on Server
     private int ticksPlayingMusic;
@@ -198,15 +202,6 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
-        super.onSyncedDataUpdated(data);
-
-        if (RIBBIT_DATA.equals(data)) {
-            this.clientInstrument = this.entityData.get(RIBBIT_DATA).getInstrument();
-        }
-    }
-
-    @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains("RibbitData", 10)) {
@@ -243,6 +238,25 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             tag.putInt("HomePosX", this.homePosition.getX());
             tag.putInt("HomePosY", this.homePosition.getY());
             tag.putInt("HomePosZ", this.homePosition.getZ());
+        }
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor) {
+        super.onSyncedDataUpdated(dataAccessor);
+
+        if (RIBBIT_DATA.equals(dataAccessor)) {
+            this.sidedRibbitData = this.entityData.get(RIBBIT_DATA);
+        } else if (UMBRELLA_FALLING.equals(dataAccessor)) {
+            this.isUmbrellaFalling = this.entityData.get(UMBRELLA_FALLING);
+        } else if (PLAYING_INSTRUMENT.equals(dataAccessor)) {
+            this.isPlayingInstrument = this.entityData.get(PLAYING_INSTRUMENT);
+        } else if (FISHING.equals(dataAccessor)) {
+            this.isFishing = this.entityData.get(FISHING);
+        } else if (WATERING.equals(dataAccessor)) {
+            this.isWatering = this.entityData.get(WATERING);
+        } else if (BUFFING.equals(dataAccessor)) {
+            this.isBuffing = this.entityData.get(BUFFING);
         }
     }
 
@@ -362,8 +376,9 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         return null;
     }
 
-    public RibbitInstrument getClientInstrument() {
-        return this.clientInstrument;
+    public void setInstrument(RibbitInstrument instrument) {
+        this.getRibbitData().setInstrument(instrument);
+        this.entityData.set(RIBBIT_DATA, this.getRibbitData(), true);
     }
 
     public int getBuffCooldown() {
@@ -383,7 +398,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public RibbitData getRibbitData() {
-        return this.entityData.get(RIBBIT_DATA);
+        return this.sidedRibbitData;
     }
 
     public void setRibbitData(RibbitData data) {
@@ -395,7 +410,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public boolean getPlayingInstrument() {
-        return this.entityData.get(PLAYING_INSTRUMENT);
+        return this.isPlayingInstrument;
     }
 
     public void setPlayingInstrument(boolean playingInstrument) {
@@ -403,7 +418,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public boolean getUmbrellaFalling() {
-        return this.entityData.get(UMBRELLA_FALLING);
+        return this.isUmbrellaFalling;
     }
 
     public void setUmbrellaFalling(boolean umbrellaFalling) {
@@ -411,7 +426,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public boolean getWatering() {
-        return this.entityData.get(WATERING);
+        return this.isWatering;
     }
 
     public void setWatering(boolean isWatering) {
@@ -419,7 +434,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public boolean getFishing() {
-        return this.entityData.get(FISHING);
+        return this.isFishing;
     }
 
     public void setFishing(boolean isFishing) {
@@ -427,7 +442,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     public boolean getBuffing() {
-        return this.entityData.get(BUFFING);
+        return this.isBuffing;
     }
 
     public void setBuffing(boolean isBuffing) {
@@ -529,7 +544,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public void remove(RemovalReason reason) {
         if (this.isMasterRibbit()) {
             findNewMasterRibbit();
-        } else if (this.getPlayingInstrument() && this.getMasterRibbit() != null){
+        } else if (this.isPlayingInstrument && this.getMasterRibbit() != null){
             this.getMasterRibbit().getRibbitsPlayingMusic().remove(this);
             this.getMasterRibbit().removeBandMember(this.getRibbitData().getInstrument());
         }
@@ -588,8 +603,8 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> state) {
         if (this.getUmbrellaFalling()) {
             state.getController().setAnimation(this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN) || this.isPrideRibbit() ? IDLE_HOLDING_2 : IDLE_HOLDING_1);
-        } else if (getPlayingInstrument() && this.clientInstrument != RibbitInstrumentModule.NONE) {
-            state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getClientInstrument().getAnimationName()));
+        } else if (getPlayingInstrument() && this.getRibbitData().getInstrument() != RibbitInstrumentModule.NONE) {
+            state.getController().setAnimation(RawAnimation.begin().thenPlay(this.getRibbitData().getInstrument().getAnimationName()));
         } else if (getBuffing()) {
             state.getController().setAnimation(this.isInRain() ? SORCERER_BUFF_HOLDING : SORCERER_BUFF);
         } else if (getFishing()) {
