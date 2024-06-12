@@ -17,15 +17,17 @@ public class RibbitFishGoal extends Goal {
     private final double range;
     private final int minRequiredFishTicks;
     private final int maxRequiredFishTicks;
+    private final float speedModifier;
 
     private int requiredFishTicks;
     private int ticksFishing;
     private BlockPos waterPos;
     private BlockPos dryPos;
 
-    public RibbitFishGoal(RibbitEntity ribbit, double range, int minRequiredFishTicks, int maxRequiredFishTicks) {
+    public RibbitFishGoal(RibbitEntity ribbit, double range, float speedModifier, int minRequiredFishTicks, int maxRequiredFishTicks) {
         this.ribbit = ribbit;
         this.range = range;
+        this.speedModifier = speedModifier;
         this.minRequiredFishTicks = minRequiredFishTicks;
         this.maxRequiredFishTicks = maxRequiredFishTicks;
 
@@ -108,7 +110,7 @@ public class RibbitFishGoal extends Goal {
             this.ribbit.getLookControl().setLookAt(this.waterPos.getX() + 0.5f, this.ribbit.getEyeY(), this.waterPos.getZ() + 0.5f);
         } else {
             this.ribbit.setFishing(false);
-            this.ribbit.getMoveControl().setWantedPosition(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f, 2.0f);
+            this.ribbit.getMoveControl().setWantedPosition(this.dryPos.getX() + 0.5f, this.dryPos.getY() + 0.5f, this.dryPos.getZ() + 0.5f, this.speedModifier);
         }
     }
 }
