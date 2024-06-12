@@ -77,11 +77,11 @@ public class ChannelMixin implements IChannelDuck {
         int samplesToOffset = (int) ((ticksToOffset / 20.0f) * frequency);
 
         // TODO - test this (modulo'ing the samples by total song length) and see if it's even necessary?
-//        int sizeInBytes = getBufferParameter(bufferId.getAsInt(), AL10.AL_SIZE);
-//        int bitsPerSample = getBufferParameter(bufferId.getAsInt(), AL10.AL_BITS);
-//        int channels = getBufferParameter(bufferId.getAsInt(), AL10.AL_CHANNELS);
-//        int lengthInSamples = sizeInBytes * 8 / (bitsPerSample * channels);
-//        samplesToOffset = samplesToOffset % lengthInSamples;
+        int sizeInBytes = getBufferParameter(bufferId.getAsInt(), AL10.AL_SIZE);
+        int bitsPerSample = getBufferParameter(bufferId.getAsInt(), AL10.AL_BITS);
+        int channels = getBufferParameter(bufferId.getAsInt(), AL10.AL_CHANNELS);
+        int lengthInSamples = sizeInBytes * 8 / (bitsPerSample * channels);
+        samplesToOffset = samplesToOffset % lengthInSamples;
 
         // Set the sample offset on the source
         IntBuffer sampleOffset = BufferUtils.createIntBuffer(1).put(samplesToOffset);
