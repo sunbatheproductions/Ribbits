@@ -57,12 +57,12 @@ public class RibbitPlayMusicGoal extends Goal {
             return false;
         }
 
-        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isDeadOrDying();
+        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isDeadOrDying() && !this.ribbit.isInWater();
     }
 
     @Override
     public boolean canContinueToUse() {
-        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isDeadOrDying() && (this.ribbit.getPlayingInstrument() || this.ribbit.getMasterRibbit() == null || !this.ribbit.getMasterRibbit().isBandFull());
+        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isInWater() && !this.ribbit.isDeadOrDying() && (this.ribbit.getPlayingInstrument() || this.ribbit.getMasterRibbit() == null || !this.ribbit.getMasterRibbit().isBandFull());
     }
 
     @Override
