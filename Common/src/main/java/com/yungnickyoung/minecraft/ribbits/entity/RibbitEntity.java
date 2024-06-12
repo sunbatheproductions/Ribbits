@@ -338,6 +338,11 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     @Override
+    public float getSpeed() {
+        return super.getSpeed();
+    }
+
+    @Override
     public void handleEntityEvent(byte flag) {
         if (flag == 12) {
             this.addParticlesAroundSelf(ParticleTypes.HEART);

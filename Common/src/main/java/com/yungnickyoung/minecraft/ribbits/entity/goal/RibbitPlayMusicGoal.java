@@ -57,12 +57,12 @@ public class RibbitPlayMusicGoal extends Goal {
             return false;
         }
 
-        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isDeadOrDying() && !this.ribbit.isInWater();
+        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isDeadOrDying();
     }
 
     @Override
     public boolean canContinueToUse() {
-        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isInWater() && !this.ribbit.isDeadOrDying() && (this.ribbit.getPlayingInstrument() || this.ribbit.getMasterRibbit() == null || !this.ribbit.getMasterRibbit().isBandFull());
+        return !this.ribbit.getUmbrellaFalling() && !this.ribbit.isDeadOrDying() && (this.ribbit.getPlayingInstrument() || this.ribbit.getMasterRibbit() == null || !this.ribbit.getMasterRibbit().isBandFull());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class RibbitPlayMusicGoal extends Goal {
             this.ticksUntilNextPathRecalculation = this.adjustedTickDelay(this.ticksUntilNextPathRecalculation);
         }
 
-        if (!this.ribbit.getPlayingInstrument() && d <= 9.0f) {
+        if (!this.ribbit.getPlayingInstrument() && d <= 9.0f && !this.ribbit.isInWater()) {
             // Set the instrument.
             if (ribbit.getRibbitData().getInstrument() == RibbitInstrumentModule.NONE) {
                 RibbitInstrument instrument = RibbitInstrumentModule.getRandomInstrument(masterRibbit.getBandMembers());
