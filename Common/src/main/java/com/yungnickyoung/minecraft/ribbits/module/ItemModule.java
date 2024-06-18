@@ -32,6 +32,9 @@ public class ItemModule {
     @AutoRegister("maraca")
     public static final AutoRegisterItem MARACA = AutoRegisterItem.of(() -> new MaracaItem(new Item.Properties().stacksTo(1)));
 
+    @AutoRegister("supporter_hat")
+    public static final AutoRegisterItem SUPPORTER_HAT = AutoRegisterItem.of(Services.PLATFORM.getSupporterHatItem());
+
     @AutoRegister("_ignored")
     public static void registerCompostables() {
         AutoRegisterUtils.addCompostableItem(() -> BlockModule.SWAMP_DAISY.get().asItem(), 0.65F);

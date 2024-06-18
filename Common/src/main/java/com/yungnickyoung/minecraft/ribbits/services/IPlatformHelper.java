@@ -51,4 +51,6 @@ public interface IPlatformHelper {
     Supplier<Block> getGiantLilyPadBlock();
 
     Supplier<Item> getRibbitSpawnEggItem(RibbitProfession profession, int backgroundColor, int highlightColor);
+
+    Supplier<Item> getSupporterHatItem();
 }

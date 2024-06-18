@@ -3,6 +3,7 @@ package com.yungnickyoung.minecraft.ribbits.services;
 import com.yungnickyoung.minecraft.ribbits.block.GiantLilyPadBlockForge;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
+import com.yungnickyoung.minecraft.ribbits.item.SupporterHatItemForge;
 import com.yungnickyoung.minecraft.ribbits.item.RibbitSpawnEggItemForge;
 import com.yungnickyoung.minecraft.ribbits.module.EntityTypeModule;
 import com.yungnickyoung.minecraft.ribbits.module.NetworkModuleForge;
@@ -89,5 +90,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
     public Supplier<Item> getRibbitSpawnEggItem(RibbitProfession profession, int backgroundColor, int highlightColor) {
         return () -> new RibbitSpawnEggItemForge(
                 EntityTypeModule.RIBBIT.get(), profession, backgroundColor, highlightColor, new Item.Properties());
+    }
+
+    @Override
+    public Supplier<Item> getSupporterHatItem() {
+        return SupporterHatItemForge::new;
     }
 }
