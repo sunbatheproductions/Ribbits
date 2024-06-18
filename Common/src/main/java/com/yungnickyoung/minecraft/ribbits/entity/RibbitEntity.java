@@ -157,7 +157,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new RibbitGoHomeGoal(this, 1.8f, 1f, 60));
         this.goalSelector.addGoal(2, new PanicGoal(this, 1.5D));
-        this.goalSelector.addGoal(3, new RibbitStopAndStareAtFrogGoal(this, 1.0D, 1.0F, 4.0F));
+        this.goalSelector.addGoal(3, new RibbitStopAndStareAtFrogGoal(this, 4.0F));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RibbitStrollGoal(this, 1.0D, 16));
     }
