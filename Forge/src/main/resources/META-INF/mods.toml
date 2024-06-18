@@ -10,8 +10,8 @@ issueTrackerURL="https://github.com/yungnickyoung/Ribbits/issues"
     credits="Thank you to the community for all your great ideas!"
     authors="Joosh, YUNGNICKYOUNG, HellionGames, Refresh Studios"
     description="${mod_description}"
-    logoFile="icon.png"
-    displayURL="https://www.curseforge.com/minecraft/mc-mods/ribbits"
+    logoFile="logo.png"
+    displayURL="http://ribbits.shop"
 
 [[dependencies.${mod_id}]]
     modId="minecraft"
