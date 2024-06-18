@@ -9,6 +9,7 @@ import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitApplyBuffGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitFishGoal;
+import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStopAndStareAtFrogGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitGoHomeGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitPlayMusicGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStrollGoal;
@@ -156,8 +157,9 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new RibbitGoHomeGoal(this, 1.8f, 1f, 60));
         this.goalSelector.addGoal(2, new PanicGoal(this, 1.5D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RibbitStrollGoal(this, 1.0D, 16));
+        this.goalSelector.addGoal(3, new RibbitStopAndStareAtFrogGoal(this, 1.0D, 1.0F, 4.0F));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RibbitStrollGoal(this, 1.0D, 16));
     }
 
     @Override
@@ -327,13 +329,13 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.goalSelector.removeGoal(this.applyBuffGoal);
 
         if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.NITWIT)) {
-            this.goalSelector.addGoal(5, this.musicGoal);
+            this.goalSelector.addGoal(6, this.musicGoal);
         } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
-            this.goalSelector.addGoal(5, this.waterCropsGoal);
+            this.goalSelector.addGoal(6, this.waterCropsGoal);
         } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
-            this.goalSelector.addGoal(5, this.fishGoal);
+            this.goalSelector.addGoal(6, this.fishGoal);
         } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER)) {
-            this.goalSelector.addGoal(5, this.applyBuffGoal);
+            this.goalSelector.addGoal(6, this.applyBuffGoal);
         }
     }
 
