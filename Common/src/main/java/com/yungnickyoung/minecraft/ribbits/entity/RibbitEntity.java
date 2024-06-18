@@ -289,6 +289,11 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     }
 
     @Override
+    public boolean removeWhenFarAway(double $$0) {
+        return false;
+    }
+
+    @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
 
