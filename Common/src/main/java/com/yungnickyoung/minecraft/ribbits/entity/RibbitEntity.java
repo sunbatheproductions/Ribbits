@@ -102,6 +102,9 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private int numberOfRestocksToday;
     private long lastRestockCheckDayTime;
 
+    // How much to multiply movement speed when in water
+    public static final float WATER_SPEED_MULTIPLIER = 3.0f;
+
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
     private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 16.0d, 1.0f, 1200);
     private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d, 1.0f, 600, 1800);
@@ -165,6 +168,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         super.aiStep();
 
         if (!this.level().isClientSide) {
+            if (this.tickCount % 600 == 0 && this.getHealth() < this.getMaxHealth()) {
+                this.setHealth(Math.min(this.getHealth() + 1, this.getMaxHealth()));
+            }
+
             if (this.onGround() && this.getUmbrellaFalling()) {
                 this.setUmbrellaFalling(false);
             }
@@ -284,6 +291,11 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
 
         this.homePosition = this.blockPosition();
         return data;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double $$0) {
+        return false;
     }
 
     @Override

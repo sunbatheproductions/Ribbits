@@ -40,15 +40,30 @@ public class RibbitGoHomeGoal extends Goal {
     }
 
     @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+        this.ribbit.getNavigation().setSpeedModifier(this.speedModifier * waterModifier);
+    }
+
+    @Override
     public void start() {
         Vec3 distanceVariance = new Vec3(
                 this.ribbit.getRandom().nextFloat() * this.homePointRange * 2 - this.homePointRange,
                 this.ribbit.getRandom().nextFloat() * this.homePointRange * 2 - this.homePointRange,
                 this.ribbit.getRandom().nextFloat() * this.homePointRange * 2 - this.homePointRange);
 
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+
         this.ribbit.getNavigation().moveTo(distanceVariance.x() + this.ribbit.getHomePosition().getX(),
                 distanceVariance.y() + this.ribbit.getHomePosition().getY(),
-                distanceVariance.z() + this.ribbit.getHomePosition().getZ(), this.speedModifier);
+                distanceVariance.z() + this.ribbit.getHomePosition().getZ(), this.speedModifier * waterModifier);
     }
 
     @Override
