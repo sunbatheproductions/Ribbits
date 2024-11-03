@@ -15,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -89,5 +91,11 @@ public class ForgePlatformHelper implements IPlatformHelper {
     public Supplier<Item> getRibbitSpawnEggItem(RibbitProfession profession, int backgroundColor, int highlightColor) {
         return () -> new RibbitSpawnEggItemForge(
                 EntityTypeModule.RIBBIT.get(), profession, backgroundColor, highlightColor, new Item.Properties());
+    }
+
+    @Override
+    public void setBlockAsFlammable(Block block, int igniteChance, int burnChance) {
+        FireBlock fireBlock = (FireBlock) Blocks.FIRE;
+        fireBlock.setFlammable(block, igniteChance, burnChance);
     }
 }

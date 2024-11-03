@@ -30,6 +30,7 @@ public class BlockModule {
                             .mapColor(MapColor.DIRT)
                             .strength(0.2f)
                             .instrument(NoteBlockInstrument.BASS)
+                            .ignitedByLava()
                             .sound(SoundType.WOOD)))
             .withItem(Item.Properties::new);
 
@@ -40,6 +41,7 @@ public class BlockModule {
                             .mapColor(MapColor.COLOR_RED)
                             .strength(0.2f)
                             .instrument(NoteBlockInstrument.BASS)
+                            .ignitedByLava()
                             .sound(SoundType.WOOD)))
             .withItem(Item.Properties::new);
 
@@ -50,6 +52,7 @@ public class BlockModule {
                             .mapColor(MapColor.WOOL)
                             .strength(0.2f)
                             .instrument(NoteBlockInstrument.BASS)
+                            .ignitedByLava()
                             .sound(SoundType.WOOD)))
             .withItem(Item.Properties::new);
 
@@ -131,4 +134,16 @@ public class BlockModule {
                             .ignitedByLava()
                             .sound(SoundType.SMALL_DRIPLEAF)))
             .withItem(Item.Properties::new);
+
+    @AutoRegister("_ignored")
+    private static void initBlocks() {
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.MOSSY_OAK_PLANKS.get(), 5, 20);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.MOSSY_OAK_PLANKS.getSlab(), 5, 20);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.MOSSY_OAK_PLANKS.getStairs(), 5, 20);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.MOSSY_OAK_PLANKS.getFence(), 5, 20);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.MOSSY_OAK_PLANKS.getFenceGate(), 5, 20);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.MOSSY_OAK_DOOR.get(), 5, 20);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.UMBRELLA_LEAF.get(), 60, 100);
+        Services.PLATFORM.setBlockAsFlammable(BlockModule.SWAMP_DAISY.get(), 60, 100);
+    }
 }

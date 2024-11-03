@@ -595,6 +595,11 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.playSound(SoundModule.ENTITY_RIBBIT_STEP.get(), 1.0F, 1.0F);
     }
 
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
+    }
+
     public boolean isPrideRibbit() {
         Random rand = new Random(this.getUUID().getLeastSignificantBits());
 

@@ -34,6 +34,7 @@
     "ribbits.mixins.json",
     "ribbits_fabric.mixins.json"
   ],
+  "accessWidener": "ribbits.accesswidener",
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "fabric": ">=${fabric_version}",
