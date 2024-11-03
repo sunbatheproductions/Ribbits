@@ -1,6 +1,5 @@
 package com.yungnickyoung.minecraft.ribbits.entity;
 
-import com.google.common.collect.Sets;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
@@ -9,12 +8,11 @@ import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitApplyBuffGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitFishGoal;
-import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStopAndStareAtFrogGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitGoHomeGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitPlayMusicGoal;
+import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStopAndStareAtFrogGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitStrollGoal;
 import com.yungnickyoung.minecraft.ribbits.entity.goal.RibbitWaterCropsGoal;
-import com.yungnickyoung.minecraft.ribbits.entity.trade.ItemListing;
 import com.yungnickyoung.minecraft.ribbits.module.EntityDataSerializerModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitProfessionModule;
@@ -669,7 +667,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public MerchantOffers getOffers() {
         if (this.offers == null) {
             this.offers = new MerchantOffers();
-            this.updateTrades();
+            RibbitTradeModule.updateTrades(this);
         }
 
         return this.offers;
@@ -698,42 +696,6 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public void notifyTradeUpdated(ItemStack itemStack) {
         if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
             this.ambientSoundTime = -this.getAmbientSoundInterval();
-        }
-    }
-
-    protected void updateTrades() {
-        RibbitData ribbitData = this.getRibbitData();
-        ItemListing[] itemListings = RibbitTradeModule.TRADES.get(ribbitData.getProfession());
-
-        if (itemListings == null || itemListings.length == 0) {
-            return;
-        }
-
-        MerchantOffers merchantOffers = this.getOffers();
-        this.addOffersFromItemListings(merchantOffers, itemListings, 4);
-    }
-
-    protected void addOffersFromItemListings(MerchantOffers merchantOffers, ItemListing[] itemListings, int numOffers) {
-        HashSet<Integer> set = Sets.newHashSet();
-        if (itemListings.length > numOffers) {
-            while (set.size() < numOffers) {
-                set.add(this.random.nextInt(itemListings.length));
-            }
-        } else {
-            for (int j = 0; j < itemListings.length; ++j) {
-                set.add(j);
-            }
-        }
-        for (Integer integer : set) {
-            ItemListing itemListing = itemListings[integer];
-            MerchantOffer merchantOffer = itemListing.getOffer(this, this.random);
-            if (merchantOffer == null) continue;
-            merchantOffers.add(merchantOffer);
-        }
-
-        // Merchants always have a maraca trade
-        if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.MERCHANT)) {
-            merchantOffers.add(RibbitTradeModule.MARACA_TRADE.getOffer(this, this.random));
         }
     }
 
