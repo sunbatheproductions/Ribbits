@@ -170,6 +170,10 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         super.aiStep();
 
         if (!this.level().isClientSide) {
+            if (this.tickCount % 600 == 0 && this.getHealth() < this.getMaxHealth()) {
+                this.setHealth(Math.min(this.getHealth() + 1, this.getMaxHealth()));
+            }
+
             if (this.onGround() && this.getUmbrellaFalling()) {
                 this.setUmbrellaFalling(false);
             }
