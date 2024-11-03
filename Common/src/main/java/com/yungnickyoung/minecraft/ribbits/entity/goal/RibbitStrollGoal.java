@@ -33,12 +33,31 @@ public class RibbitStrollGoal extends RandomStrollGoal {
     }
 
     @Override
+    public void start() {
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+        this.mob.getNavigation().moveTo(this.wantedX, this.wantedY, this.wantedZ, this.speedModifier * waterModifier);
+    }
+
+    @Override
     public boolean canUse() {
         if (this.ribbit.level().isNight()) {
             return false;
         }
 
         return super.canUse();
+    }
+
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+        this.ribbit.getNavigation().setSpeedModifier(this.speedModifier * waterModifier);
     }
 
     @Nullable

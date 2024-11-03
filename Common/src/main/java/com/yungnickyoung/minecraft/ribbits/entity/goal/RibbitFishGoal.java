@@ -42,7 +42,8 @@ public class RibbitFishGoal extends Goal {
         this.requiredFishTicks = this.ribbit.getRandom().nextInt(this.minRequiredFishTicks, this.maxRequiredFishTicks);
         this.ticksFishing = 0;
 
-        this.ribbit.getNavigation().moveTo(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier);
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+        this.ribbit.getNavigation().moveTo(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier * waterModifier);
     }
 
     @Override
@@ -118,16 +119,19 @@ public class RibbitFishGoal extends Goal {
 
     @Override
     public void tick() {
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+        this.ribbit.getNavigation().setSpeedModifier(this.speedModifier * waterModifier);
+
         if (this.ribbit.distanceToSqr(this.dryPos) <= REQUIRED_DISTANCE_TO_DRY_POS * REQUIRED_DISTANCE_TO_DRY_POS) {
             this.ticksFishing++;
             this.ribbit.setFishing(true);
             this.ribbit.getLookControl().setLookAt(this.waterPos.getX() + 0.5f, this.ribbit.getEyeY(), this.waterPos.getZ() + 0.5f);
         } else if (this.ribbit.distanceToSqr(this.dryPos) < 1.0f) {
             this.ribbit.setFishing(false);
-            this.ribbit.getMoveControl().setWantedPosition(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier);
+            this.ribbit.getMoveControl().setWantedPosition(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier * waterModifier);
         } else {
             this.ribbit.setFishing(false);
-            this.ribbit.getNavigation().moveTo(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier);
+            this.ribbit.getNavigation().moveTo(this.dryPos.x(), this.dryPos.y(), this.dryPos.z(), this.speedModifier * waterModifier);
         }
     }
 }

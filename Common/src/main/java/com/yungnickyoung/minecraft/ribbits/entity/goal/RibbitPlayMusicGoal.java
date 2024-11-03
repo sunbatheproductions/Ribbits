@@ -70,8 +70,10 @@ public class RibbitPlayMusicGoal extends Goal {
         this.ribbit.setInstrument(RibbitInstrumentModule.NONE);
 
         if (this.ribbit.getMasterRibbit() != null) {
+            float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+
             this.path = this.ribbit.getNavigation().createPath(this.ribbit.getMasterRibbit(), 0);
-            this.ribbit.getNavigation().moveTo(this.path, this.speedModifier);
+            this.ribbit.getNavigation().moveTo(this.path, this.speedModifier * waterModifier);
         }
 
         if (this.ribbit.getMasterRibbit() == null) {
@@ -133,6 +135,10 @@ public class RibbitPlayMusicGoal extends Goal {
         double d = this.ribbit.distanceToSqr(masterRibbit.getX(), masterRibbit.getY(), masterRibbit.getZ());
         this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
 
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+
+        this.ribbit.getNavigation().setSpeedModifier(this.speedModifier * waterModifier);
+
         if (!this.ribbit.getPlayingInstrument() && this.ticksUntilNextPathRecalculation == 0 && (this.pathedTargetX == 0.0 && this.pathedTargetY == 0.0 && this.pathedTargetZ == 0.0 || masterRibbit.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= 1.0 || this.ribbit.getRandom().nextFloat() < 0.05f)) {
             this.pathedTargetX = masterRibbit.getX();
             this.pathedTargetY = masterRibbit.getY();
@@ -143,7 +149,7 @@ public class RibbitPlayMusicGoal extends Goal {
             } else if (d > 256.0) {
                 this.ticksUntilNextPathRecalculation += 5;
             }
-            if (!this.ribbit.getNavigation().moveTo(masterRibbit, this.speedModifier)) {
+            if (!this.ribbit.getNavigation().moveTo(masterRibbit, this.speedModifier * waterModifier)) {
                 this.ticksUntilNextPathRecalculation += 15;
             }
             this.ticksUntilNextPathRecalculation = this.adjustedTickDelay(this.ticksUntilNextPathRecalculation);
@@ -176,7 +182,7 @@ public class RibbitPlayMusicGoal extends Goal {
         if (this.ribbit.getPlayingInstrument()) {
             this.ribbit.getNavigation().stop();
 
-            if (d > 9.0f) {
+            if (d > 9.0f || this.ribbit.isInWater()) {
                 this.ribbit.setPlayingInstrument(false);
                 masterRibbit.removeBandMember(this.ribbit.getRibbitData().getInstrument());
                 this.ribbit.setInstrument(RibbitInstrumentModule.NONE);

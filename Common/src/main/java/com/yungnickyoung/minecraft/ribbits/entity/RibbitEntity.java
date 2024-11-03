@@ -104,6 +104,9 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private int numberOfRestocksToday;
     private long lastRestockCheckDayTime;
 
+    // How much to multiply movement speed when in water
+    public static final float WATER_SPEED_MULTIPLIER = 3.0f;
+
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
     private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 16.0d, 1.0f, 1200);
     private final RibbitFishGoal fishGoal = new RibbitFishGoal(this, 16.0d, 1.0f, 600, 1800);

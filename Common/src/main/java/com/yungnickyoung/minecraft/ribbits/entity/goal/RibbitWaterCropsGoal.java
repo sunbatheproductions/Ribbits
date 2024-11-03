@@ -39,7 +39,10 @@ public class RibbitWaterCropsGoal extends Goal {
 
     @Override
     public void start() {
-        this.ribbit.getNavigation().moveTo(this.targetCropPos.getX() + 0.5f, this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f, this.speedModifier);
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+
+        this.ribbit.getNavigation().moveTo(this.targetCropPos.getX() + 0.5f,
+                this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f, this.speedModifier * waterModifier);
     }
 
     @Override
@@ -100,6 +103,8 @@ public class RibbitWaterCropsGoal extends Goal {
             return;
         }
 
+        float waterModifier = this.ribbit.isInWater() ? RibbitEntity.WATER_SPEED_MULTIPLIER : 1.0f;
+        this.ribbit.getNavigation().setSpeedModifier(this.speedModifier * waterModifier);
         if (this.ribbit.distanceToSqr(this.targetCropPos.getX() + 0.5f, this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f) < 2.0f) {
             if (this.wateringTicks == 0) {
                 this.ribbit.getLookControl().setLookAt(this.targetCropPos.getX() + 0.5f, this.ribbit.getEyeY(), this.targetCropPos.getZ() + 0.5f);
@@ -118,10 +123,12 @@ public class RibbitWaterCropsGoal extends Goal {
             }
         } else if (this.ribbit.distanceToSqr(this.targetCropPos.getX() + 0.5f, this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f) < 3.0f) {
             this.ribbit.setWatering(false);
-            this.ribbit.getMoveControl().setWantedPosition(this.targetCropPos.getX() + 0.5f, this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f, this.speedModifier);
+            this.ribbit.getMoveControl().setWantedPosition(this.targetCropPos.getX() + 0.5f,
+                    this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f, this.speedModifier * waterModifier);
         } else {
             this.ribbit.setWatering(false);
-            this.ribbit.getNavigation().moveTo(this.targetCropPos.getX() + 0.5f, this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f, this.speedModifier);
+            this.ribbit.getNavigation().moveTo(this.targetCropPos.getX() + 0.5f,
+                    this.targetCropPos.getY(), this.targetCropPos.getZ() + 0.5f, this.speedModifier * waterModifier);
         }
     }
 
