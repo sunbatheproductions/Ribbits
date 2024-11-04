@@ -103,7 +103,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private long lastRestockCheckDayTime;
 
     // How much to multiply movement speed when in water
-    public static final float WATER_SPEED_MULTIPLIER = 3.0f;
+    public static final float WATER_SPEED_MULTIPLIER = 2.0f;
 
     private final RibbitPlayMusicGoal musicGoal = new RibbitPlayMusicGoal(this, 1.0f, 2000, 3000);
     private final RibbitWaterCropsGoal waterCropsGoal = new RibbitWaterCropsGoal(this, 16.0d, 1.0f, 1200);
@@ -636,28 +636,36 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
             state.getController().setAnimation(this.isInRain() ? FISH_HOLDING : FISH);
         } else if (getWatering()) {
             state.getController().setAnimation(this.isInRain() ? WATER_CROPS_HOLDING: WATER_CROPS);
-        } else if (state.isMoving()) {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
-                state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2);
-            } else if (this.isPrideRibbit()) {
-                state.getController().setAnimation(WALK_HOLDING_2);
-            } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
-                state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_HAT : WALK);
-            } else {
-                state.getController().setAnimation(this.isInRain() ? WALK_HOLDING_1 : WALK);
-            }
+        } else if (state.isMoving() && !this.isInWater()) {
+            state.getController().setAnimation(this.getWalkAnimation());
           } else {
-            if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
-                state.getController().setAnimation(this.isInRain() ? IDLE_HOLDING_FISHERMAN : IDLE_HOLDING_2);
-            } else if (this.isPrideRibbit()) {
-                state.getController().setAnimation(IDLE_HOLDING_2);
-            } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
-                state.getController().setAnimation(this.isInRain() ? IDLE_HOLDING_HAT : IDLE);
-            } else {
-                state.getController().setAnimation(this.isInRain() ? IDLE_HOLDING_1 : IDLE);
-            }
+            state.getController().setAnimation(this.getIdleAnimation());
         }
         return PlayState.CONTINUE;
+    }
+
+    private RawAnimation getWalkAnimation() {
+        if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
+            return this.isInRain() ? WALK_HOLDING_FISHERMAN : WALK_HOLDING_2;
+        } else if (this.isPrideRibbit()) {
+            return WALK_HOLDING_2;
+        } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
+            return this.isInRain() ? WALK_HOLDING_HAT : WALK;
+        } else {
+            return this.isInRain() ? WALK_HOLDING_1 : WALK;
+        }
+    }
+
+    private RawAnimation getIdleAnimation() {
+        if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.FISHERMAN)) {
+            return this.isInRain() ? IDLE_HOLDING_FISHERMAN : IDLE_HOLDING_2;
+        } else if (this.isPrideRibbit()) {
+            return IDLE_HOLDING_2;
+        } else if (this.getRibbitData().getProfession().equals(RibbitProfessionModule.SORCERER) || this.getRibbitData().getProfession().equals(RibbitProfessionModule.GARDENER)) {
+            return this.isInRain() ? IDLE_HOLDING_HAT : IDLE;
+        } else {
+            return this.isInRain() ? IDLE_HOLDING_1 : IDLE;
+        }
     }
 
     @Override
