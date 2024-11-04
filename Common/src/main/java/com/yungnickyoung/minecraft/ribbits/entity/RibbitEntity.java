@@ -138,7 +138,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     private Set<RibbitEntity> ribbitsPlayingMusic = new HashSet<>();
     private Set<Player> playersHearingMusic = new HashSet<>();
     private Set<RibbitInstrument> bandMembers = new HashSet<>();
-    private RibbitEntity masterRibbit;
+    @Nullable private RibbitEntity masterRibbit;
 
     private int buffCooldown = 0;
     private int waterCropsCooldown = 0;
@@ -498,6 +498,7 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
         this.playersHearingMusic = new HashSet<>(playersHearingMusic);
     }
 
+    @Nullable
     public RibbitEntity getMasterRibbit() {
         return this.masterRibbit;
     }

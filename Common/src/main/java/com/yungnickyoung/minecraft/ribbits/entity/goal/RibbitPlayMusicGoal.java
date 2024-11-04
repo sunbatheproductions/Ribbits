@@ -85,8 +85,10 @@ public class RibbitPlayMusicGoal extends Goal {
 
     @Override
     public void stop() {
-        this.ribbit.getMasterRibbit().removeRibbitFromPlayingMusic(this.ribbit);
-        this.ribbit.getMasterRibbit().removeBandMember(this.ribbit.getRibbitData().getInstrument());
+        if (this.ribbit.getMasterRibbit() != null) {
+            this.ribbit.getMasterRibbit().removeRibbitFromPlayingMusic(this.ribbit);
+            this.ribbit.getMasterRibbit().removeBandMember(this.ribbit.getRibbitData().getInstrument());
+        }
 
         if (this.ribbit.isMasterRibbit()) {
             this.ribbit.findNewMasterRibbit();
