@@ -22,11 +22,7 @@ public class RibbitTradeModule {
                 new ItemsForAmethysts(BlockModule.RED_TOADSTOOL.get().asItem(), 1, 1, 8, 16, 32),
                 new ItemsForAmethysts(BlockModule.TOADSTOOL_STEM.get().asItem(), 1, 1, 8, 16, 32),
                 new ItemsForAmethysts(BlockModule.MOSSY_OAK_PLANKS.get().asItem(), 1, 2, 16, 32, 32),
-                new ItemsForAmethysts(BlockModule.SWAMP_LANTERN.get().asItem(), 2, 3, 4, 16, 32),
-                new ItemsForAmethysts(ItemModule.GIANT_LILYPAD.get(), 1, 3, 4, 16, 32),
-                new ItemsForAmethysts(BlockModule.SWAMP_DAISY.get().asItem(), 1, 3, 4, 16, 32),
-                new ItemsForAmethysts(BlockModule.UMBRELLA_LEAF.get().asItem(), 1, 3, 4, 16, 32),
-                new ItemsForAmethysts(BlockModule.TOADSTOOL.get().asItem(), 1, 3, 4, 16, 32),
+                new ItemsForAmethysts(BlockModule.SWAMP_LANTERN.get().asItem(), 2, 3, 4, 8, 32),
                 new ItemsForAmethysts(ItemModule.MARACA.get(), 6, 8, 1, 1, 4)
         });
 
