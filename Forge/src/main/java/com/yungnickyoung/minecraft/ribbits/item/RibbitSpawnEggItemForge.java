@@ -10,7 +10,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +27,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext useOnContext) {
+    public @NotNull InteractionResult useOn(UseOnContext useOnContext) {
         BlockEntity blockEntity;
         Level level = useOnContext.getLevel();
         if (!(level instanceof ServerLevel)) {
@@ -56,7 +56,7 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
             spawnerBlockEntity.setEntityId(entityType, level.getRandom());
             blockEntity.setChanged();
             level.sendBlockUpdated(blockPos, blockState, blockState, 3);
-            level.gameEvent((Entity)useOnContext.getPlayer(), GameEvent.BLOCK_CHANGE, blockPos);
+            level.gameEvent(useOnContext.getPlayer(), GameEvent.BLOCK_CHANGE, blockPos);
             itemStack.shrink(1);
             return InteractionResult.CONSUME;
         }
@@ -77,7 +77,7 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
         BlockHitResult blockHitResult = SpawnEggItem.getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
         if (blockHitResult.getType() != HitResult.Type.BLOCK) {
@@ -86,12 +86,11 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
         if (!(level instanceof ServerLevel)) {
             return InteractionResultHolder.success(itemStack);
         }
-        BlockHitResult blockHitResult2 = blockHitResult;
-        BlockPos blockPos = blockHitResult2.getBlockPos();
+        BlockPos blockPos = blockHitResult.getBlockPos();
         if (!(level.getBlockState(blockPos).getBlock() instanceof LiquidBlock)) {
             return InteractionResultHolder.pass(itemStack);
         }
-        if (!level.mayInteract(player, blockPos) || !player.mayUseItemAt(blockPos, blockHitResult2.getDirection(), itemStack)) {
+        if (!level.mayInteract(player, blockPos) || !player.mayUseItemAt(blockPos, blockHitResult.getDirection(), itemStack)) {
             return InteractionResultHolder.fail(itemStack);
         }
         EntityType<?> entityType = this.getType(itemStack.getTag());
@@ -111,5 +110,9 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
         player.awardStat(Stats.ITEM_USED.get(this));
         level.gameEvent(player, GameEvent.ENTITY_PLACE, ribbit.position());
         return InteractionResultHolder.consume(itemStack);
+    }
+
+    public RibbitProfession getProfession() {
+        return profession;
     }
 }

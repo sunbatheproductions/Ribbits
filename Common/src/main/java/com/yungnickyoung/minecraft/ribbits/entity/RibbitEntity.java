@@ -271,10 +271,14 @@ public class RibbitEntity extends AgeableMob implements GeoEntity, Merchant {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, groupData, tag);
 
-        if (spawnType == MobSpawnType.SPAWN_EGG) {
+        if (spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.DISPENSER) {
             if (tag.contains("Profession")) {
                 String[] professionId = tag.getString("Profession").split(":");
                 RibbitProfession profession = RibbitProfessionModule.getProfession(new ResourceLocation(professionId[0], professionId[1]));
+                if (profession == null) {
+                    RibbitsCommon.LOGGER.error("Invalid Ribbit profession ID: {}", tag.getString("Profession"));
+                    profession = RibbitProfessionModule.NITWIT; // default to nitwit
+                }
                 this.setRibbitData(new RibbitData(profession, RibbitUmbrellaTypeModule.getRandomUmbrellaType(), RibbitInstrumentModule.NONE));
             }
         } else {
