@@ -4,6 +4,7 @@ import com.yungnickyoung.minecraft.ribbits.data.RibbitProfession;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
@@ -28,10 +29,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
+    private static final DispenseItemBehavior RIBBIT_DISPENSER_BEHAVIOR = new RibbitSpawnEggDispenseItemBehaviorForge();
     private final RibbitProfession profession;
 
     public RibbitSpawnEggItemForge(EntityType<RibbitEntity> entityType, RibbitProfession profession, int backgroundColor, int highlightColor, Properties properties) {
@@ -51,7 +54,7 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
         Direction direction = useOnContext.getClickedFace();
         BlockState blockState = level.getBlockState(blockPos);
         if (blockState.is(Blocks.SPAWNER) && (blockEntity = level.getBlockEntity(blockPos)) instanceof SpawnerBlockEntity) {
-            SpawnerBlockEntity spawnerBlockEntity = (SpawnerBlockEntity)blockEntity;
+            SpawnerBlockEntity spawnerBlockEntity = (SpawnerBlockEntity) blockEntity;
             EntityType<?> entityType = this.getType(itemStack.getTag());
             spawnerBlockEntity.setEntityId(entityType, level.getRandom());
             blockEntity.setChanged();
@@ -67,7 +70,7 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
 
         itemTag.putString("Profession", this.profession.toString());
 
-        RibbitEntity ribbit = (RibbitEntity) entityType2.spawn((ServerLevel)level, itemStack, useOnContext.getPlayer(), blockPos2, MobSpawnType.SPAWN_EGG, true, !Objects.equals(blockPos, blockPos2) && direction == Direction.UP);
+        RibbitEntity ribbit = (RibbitEntity) entityType2.spawn((ServerLevel) level, itemStack, useOnContext.getPlayer(), blockPos2, MobSpawnType.SPAWN_EGG, true, !Objects.equals(blockPos, blockPos2) && direction == Direction.UP);
         if (ribbit != null) {
 
             itemStack.shrink(1);
@@ -99,7 +102,7 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
 
         itemTag.putString("Profession", this.profession.toString());
 
-        RibbitEntity ribbit = (RibbitEntity) entityType.spawn((ServerLevel)level, itemStack, player, blockPos, MobSpawnType.SPAWN_EGG, false, false);
+        RibbitEntity ribbit = (RibbitEntity) entityType.spawn((ServerLevel) level, itemStack, player, blockPos, MobSpawnType.SPAWN_EGG, false, false);
         if (ribbit == null) {
             return InteractionResultHolder.pass(itemStack);
         }
@@ -110,6 +113,11 @@ public class RibbitSpawnEggItemForge extends ForgeSpawnEggItem {
         player.awardStat(Stats.ITEM_USED.get(this));
         level.gameEvent(player, GameEvent.ENTITY_PLACE, ribbit.position());
         return InteractionResultHolder.consume(itemStack);
+    }
+
+    @Override
+    protected @Nullable DispenseItemBehavior createDispenseBehavior() {
+        return RIBBIT_DISPENSER_BEHAVIOR;
     }
 
     public RibbitProfession getProfession() {
