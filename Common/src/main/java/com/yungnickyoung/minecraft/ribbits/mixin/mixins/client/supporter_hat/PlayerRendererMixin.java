@@ -21,7 +21,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
     /*
      * Adds supporter hat renderer
      */
-    @Inject(method = "<init>", at = @At("TAIL"))
+    @Inject(method = "<init>", at = @At("RETURN"))
     private void ribbits$addSupporterHatArmorLayer(EntityRendererProvider.Context context, boolean bl, CallbackInfo ci) {
         this.addLayer(new SupporterHatRenderer(this, context));
     }

@@ -3,6 +3,7 @@ package com.yungnickyoung.minecraft.ribbits.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
+import com.yungnickyoung.minecraft.ribbits.client.RibbitsCommonClient;
 import com.yungnickyoung.minecraft.ribbits.client.model.SupporterHatModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -29,8 +30,7 @@ public class SupporterHatRenderer extends RenderLayer<AbstractClientPlayer, Play
 
     @Override
     public void render(PoseStack stack, MultiBufferSource bufferSource, int i, AbstractClientPlayer player, float f, float g, float tickDelta, float j, float k, float l) {
-        boolean enabled = true; // TODO check if player in UUID list
-        if (enabled) {
+        if (RibbitsCommonClient.isSupporterHatEnabled()) { // TODO - check if player in UUID list
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(TEXTURE));
 
             int light = this.entityRenderDispatcher.getRenderer(player).getPackedLightCoords(player, tickDelta);
