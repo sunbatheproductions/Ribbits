@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "ribbits.refmap.json",
   "mixins": [
-    "accessor.DoorBlockAccessor",
+    "accessor.DoorBlockAccessor"
   ],
   "client": [
     "client.accessor.ClientLevelAccessor",
@@ -14,7 +14,8 @@
     "client.maraca.ModelBakeryMixin",
     "client.music.ChannelMixin",
     "client.music.SoundEngineMixin",
-    "client.music.SoundManagerMixin"
+    "client.music.SoundManagerMixin",
+    "client.supporter_hat.PlayerRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
