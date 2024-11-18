@@ -12,6 +12,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class RibbitsForgeClient {
     public static void init() {
+        RibbitsCommonClient.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(RibbitsForgeClient::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(RibbitsForgeClient::registerRenderers);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(RibbitsForgeClient::registerLayers);

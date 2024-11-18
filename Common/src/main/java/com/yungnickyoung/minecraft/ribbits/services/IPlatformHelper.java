@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public interface IPlatformHelper {
@@ -31,6 +32,8 @@ public interface IPlatformHelper {
      * @return True if in a development environment, false otherwise.
      */
     boolean isDevelopmentEnvironment();
+
+    Path getConfigPath();
 
     /**
      * Called when a ribbit starts playing music. This method should send a packet to all clients to play the music.

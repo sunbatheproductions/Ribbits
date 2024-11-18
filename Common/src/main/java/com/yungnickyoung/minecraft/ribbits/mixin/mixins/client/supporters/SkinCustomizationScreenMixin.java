@@ -1,6 +1,9 @@
-package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.supporter_hat;
+package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.supporters;
 
 import com.yungnickyoung.minecraft.ribbits.client.RibbitsCommonClient;
+import com.yungnickyoung.minecraft.ribbits.client.supporters.RibbitOptionsJSON;
+import com.yungnickyoung.minecraft.ribbits.client.supporters.SupportersJSON;
+import com.yungnickyoung.minecraft.ribbits.services.Services;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -16,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.UUID;
 
 @Mixin(SkinCustomizationScreen.class)
 public abstract class SkinCustomizationScreenMixin extends OptionsSubScreen {
@@ -58,16 +63,24 @@ public abstract class SkinCustomizationScreenMixin extends OptionsSubScreen {
                     target = "Lnet/minecraft/client/gui/screens/SkinCustomizationScreen;addRenderableWidget(Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void ribbits$addSupporterHatToggleOption(CallbackInfo ci, int i) {
+        // Null checks just to be safe
+        if (this.minecraft == null) return;
+        UUID playerUUID = this.minecraft.getUser().getProfileId();
+        if (playerUUID == null) return;
+
+        // Only show the supporter hat toggle button if the player is a supporter, or if in development environment
+        if (!Services.PLATFORM.isDevelopmentEnvironment() && !SupportersJSON.get().isSupporter(playerUUID)) return;
+
         if (i == PlayerModelPart.values().length + 1) {
             this.addRenderableWidget(
-                    CycleButton.onOffBuilder(RibbitsCommonClient.isSupporterHatEnabled())
+                    CycleButton.onOffBuilder(RibbitOptionsJSON.get().isSupporterHatEnabled())
                             .create(
                                     this.width / 2 - 155 + i % 2 * 160,
                                     this.height / 6 + 24 * (i >> 1),
                                     150,
                                     20,
                                     Component.translatable("ribbits.options.supporter_hat_button"),
-                                    (button, enabled) -> RibbitsCommonClient.setSupporterHatEnabled(enabled)
+                                    (button, enabled) -> RibbitOptionsJSON.get().setSupporterHatEnabled(enabled)
                             )
             );
             i++;

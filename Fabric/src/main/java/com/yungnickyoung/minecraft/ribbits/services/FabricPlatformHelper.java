@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +47,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public Path getConfigPath() {
+        return FabricLoader.getInstance().getConfigDir();
+    }
+
+    @Override
     public void onRibbitStartMusicGoal(ServerLevel serverLevel, RibbitEntity newRibbit, RibbitEntity masterRibbit) {
         FriendlyByteBuf buf = PacketByteBufs.create();
 
@@ -57,7 +63,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         buf.writeResourceLocation(newRibbit.getRibbitData().getInstrument().getId());
         buf.writeInt(tickOffset);
 
-        PlayerLookup.all(serverLevel.getServer()).forEach(player -> ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_START_MUSIC_SINGLE, buf));
+        PlayerLookup.all(serverLevel.getServer()).forEach(player -> ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_START_MUSIC_SINGLE_S2C, buf));
     }
 
     @Override
@@ -78,19 +84,19 @@ public class FabricPlatformHelper implements IPlatformHelper {
         BufferUtils.writeResourceLocationList(instrumentIds, buf);
         buf.writeInt(masterRibbit.getTicksPlayingMusic());
 
-        ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_START_MUSIC_ALL, buf);
+        ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_START_MUSIC_ALL_S2C, buf);
     }
 
     @Override
     public void onPlayerExitBandRange(ServerPlayer player, ServerLevel serverLevel, RibbitEntity masterRibbit) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeUUID(masterRibbit.getUUID());
-        ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_STOP_MUSIC, buf);
+        ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_STOP_MUSIC_S2C, buf);
 
         for (RibbitEntity ribbit : masterRibbit.getRibbitsPlayingMusic()) {
             buf = PacketByteBufs.create();
             buf.writeUUID(ribbit.getUUID());
-            ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_STOP_MUSIC, buf);
+            ServerPlayNetworking.send(player, NetworkModuleFabric.RIBBIT_STOP_MUSIC_S2C, buf);
         }
     }
 
@@ -98,14 +104,14 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public void startHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeUUID(performer.getUUID());
-        ServerPlayNetworking.send(audienceMember, NetworkModuleFabric.START_HEARING_MARACA, buf);
+        ServerPlayNetworking.send(audienceMember, NetworkModuleFabric.START_HEARING_MARACA_S2C, buf);
     }
 
     @Override
     public void stopHearingMaraca(ServerPlayer performer, ServerPlayer audienceMember) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeUUID(performer.getUUID());
-        ServerPlayNetworking.send(audienceMember, NetworkModuleFabric.STOP_HEARING_MARACA, buf);
+        ServerPlayNetworking.send(audienceMember, NetworkModuleFabric.STOP_HEARING_MARACA_S2C, buf);
     }
 
     @Override

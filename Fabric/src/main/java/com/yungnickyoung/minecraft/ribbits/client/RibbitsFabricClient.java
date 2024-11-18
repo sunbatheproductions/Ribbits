@@ -14,8 +14,9 @@ import net.minecraft.client.renderer.RenderType;
 public class RibbitsFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        NetworkModuleFabric.registerS2CPackets();
+        RibbitsCommonClient.init();
 
+        NetworkModuleFabric.registerS2CPackets();
         BlockRenderLayerMap.INSTANCE.putBlock(BlockModule.SWAMP_LANTERN.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(BlockModule.GIANT_LILYPAD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(BlockModule.SWAMP_DAISY.get(), RenderType.cutout());

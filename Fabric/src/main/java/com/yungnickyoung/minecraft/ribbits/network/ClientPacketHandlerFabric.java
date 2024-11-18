@@ -1,24 +1,32 @@
 package com.yungnickyoung.minecraft.ribbits.network;
 
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
+import com.yungnickyoung.minecraft.ribbits.client.RibbitsCommonClient;
 import com.yungnickyoung.minecraft.ribbits.client.sound.PlayerInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundInstance;
+import com.yungnickyoung.minecraft.ribbits.client.supporters.RibbitOptionsJSON;
+import com.yungnickyoung.minecraft.ribbits.client.supporters.SupportersListClient;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.mixin.interfaces.client.ISoundManagerDuck;
 import com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.accessor.ClientLevelAccessor;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.module.SoundModule;
+import com.yungnickyoung.minecraft.ribbits.network.packet.RequestSupporterHatStatePacket;
+import com.yungnickyoung.minecraft.ribbits.network.packet.ToggleSupporterPacket;
+import com.yungnickyoung.minecraft.ribbits.services.Services;
 import com.yungnickyoung.minecraft.ribbits.util.BufferUtils;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -147,5 +155,19 @@ public class ClientPacketHandlerFabric {
         client.execute(() -> {
             ((ISoundManagerDuck) Minecraft.getInstance().getSoundManager()).ribbits$stopMaraca(performerId);
         });
+    }
+
+    public static void receiveToggleSupporterHat(ToggleSupporterPacket packet, LocalPlayer player, PacketSender responseSender) {
+        // Update the player's supporter hat status on the client
+        SupportersListClient.toggleSupporterHat(packet.playerUUID(), packet.enabled());
+    }
+
+    public static void receiveSupporterHatStateRequest(RequestSupporterHatStatePacket packet, LocalPlayer player, PacketSender responseSender) {
+        // Populate local supporter hat list with the list from the server
+        SupportersListClient.clear();
+        packet.enabledSupporterHatPlayers().forEach(playerUUID -> SupportersListClient.toggleSupporterHat(playerUUID, true));
+
+        // Send a ToggleSupporterPacket back to the server with this player's supporter hat state
+        Services.SUPPORTER_HELPER.toggleSupporterHatNotifyServer(RibbitOptionsJSON.get().isSupporterHatEnabled());
     }
 }

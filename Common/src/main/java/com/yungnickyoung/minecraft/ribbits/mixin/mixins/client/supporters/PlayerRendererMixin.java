@@ -1,4 +1,4 @@
-package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.supporter_hat;
+package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.supporters;
 
 import com.yungnickyoung.minecraft.ribbits.client.render.SupporterHatRenderer;
 import net.minecraft.client.model.PlayerModel;

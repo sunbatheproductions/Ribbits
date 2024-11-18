@@ -15,8 +15,8 @@
     "client.music.ChannelMixin",
     "client.music.SoundEngineMixin",
     "client.music.SoundManagerMixin",
-    "client.supporter_hat.PlayerRendererMixin",
-    "client.supporter_hat.SkinCustomizationScreenMixin"
+    "client.supporters.PlayerRendererMixin",
+    "client.supporters.SkinCustomizationScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
