@@ -35,7 +35,7 @@ public class RibbitOptionsJSON {
 
     public void setSupporterHatEnabled(boolean enabled) {
         this.enableSupporterHat = enabled;
-        Services.SUPPORTER_HELPER.toggleSupporterHatNotifyServer(enabled);
+        Services.SUPPORTER_HELPER.notifyServerOfSupporterHatState(enabled);
         saveToFile();
     }
 

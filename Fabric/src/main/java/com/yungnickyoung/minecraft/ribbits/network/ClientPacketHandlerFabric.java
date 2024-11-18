@@ -1,7 +1,6 @@
 package com.yungnickyoung.minecraft.ribbits.network;
 
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
-import com.yungnickyoung.minecraft.ribbits.client.RibbitsCommonClient;
 import com.yungnickyoung.minecraft.ribbits.client.sound.PlayerInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.client.supporters.RibbitOptionsJSON;
@@ -26,7 +25,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -168,6 +166,6 @@ public class ClientPacketHandlerFabric {
         packet.enabledSupporterHatPlayers().forEach(playerUUID -> SupportersListClient.toggleSupporterHat(playerUUID, true));
 
         // Send a ToggleSupporterPacket back to the server with this player's supporter hat state
-        Services.SUPPORTER_HELPER.toggleSupporterHatNotifyServer(RibbitOptionsJSON.get().isSupporterHatEnabled());
+        Services.SUPPORTER_HELPER.notifyServerOfSupporterHatState(RibbitOptionsJSON.get().isSupporterHatEnabled());
     }
 }

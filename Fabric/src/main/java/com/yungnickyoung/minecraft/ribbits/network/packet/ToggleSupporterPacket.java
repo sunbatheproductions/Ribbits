@@ -8,7 +8,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.UUID;
 
 /**
- * Packet sent from the client to the server to toggle the supporter hat for the given player.
+ * Packet to toggle the supporter hat for the given player.
+ * The client sends this packet to the server to toggle the supporter hat for the player, and the server then
+ * forwards the packet to all clients to keep all clients in sync.
  * @param playerUUID The UUID of the player to toggle the supporter hat for
  * @param enabled Whether to enable or disable the supporter hat
  */

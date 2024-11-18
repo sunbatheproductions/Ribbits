@@ -3,12 +3,15 @@ package com.yungnickyoung.minecraft.ribbits.network;
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
 import com.yungnickyoung.minecraft.ribbits.client.sound.PlayerInstrumentSoundInstance;
 import com.yungnickyoung.minecraft.ribbits.client.sound.RibbitInstrumentSoundInstance;
+import com.yungnickyoung.minecraft.ribbits.client.supporters.RibbitOptionsJSON;
+import com.yungnickyoung.minecraft.ribbits.client.supporters.SupportersListClient;
 import com.yungnickyoung.minecraft.ribbits.data.RibbitInstrument;
 import com.yungnickyoung.minecraft.ribbits.entity.RibbitEntity;
 import com.yungnickyoung.minecraft.ribbits.mixin.interfaces.client.ISoundManagerDuck;
 import com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.accessor.ClientLevelAccessor;
 import com.yungnickyoung.minecraft.ribbits.module.RibbitInstrumentModule;
 import com.yungnickyoung.minecraft.ribbits.module.SoundModule;
+import com.yungnickyoung.minecraft.ribbits.services.Services;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -139,5 +142,19 @@ public class ClientPacketHandlerForge {
 
             ((ISoundManagerDuck) Minecraft.getInstance().getSoundManager()).ribbits$stopMaraca(performerId);
         }
+    }
+
+    public static void handleToggleSupporterHat(ToggleSupporterHatS2CPacket packet, Supplier<NetworkEvent.Context> ctx) {
+        // Update the player's supporter hat status on the client
+        SupportersListClient.toggleSupporterHat(packet.getPlayerUuid(), packet.getEnabled());
+    }
+
+    public static void handleSupporterHatStateRequest(RequestSupporterHatStateS2CPacket packet, Supplier<NetworkEvent.Context> ctx) {
+        // Populate local supporter hat list with the list from the server
+        SupportersListClient.clear();
+        packet.getEnabledSupporterHatPlayers().forEach(playerUUID -> SupportersListClient.toggleSupporterHat(playerUUID, true));
+
+        // Send a ToggleSupporterPacket back to the server with this player's supporter hat state
+        Services.SUPPORTER_HELPER.notifyServerOfSupporterHatState(RibbitOptionsJSON.get().isSupporterHatEnabled());
     }
 }

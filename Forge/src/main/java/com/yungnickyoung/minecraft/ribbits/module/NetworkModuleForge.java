@@ -3,9 +3,12 @@ package com.yungnickyoung.minecraft.ribbits.module;
 import com.yungnickyoung.minecraft.ribbits.RibbitsCommon;
 import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStartS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.PlayerMusicStopS2CPacket;
+import com.yungnickyoung.minecraft.ribbits.network.RequestSupporterHatStateS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartAllS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStartSingleS2CPacket;
 import com.yungnickyoung.minecraft.ribbits.network.RibbitMusicStopSingleS2CPacket;
+import com.yungnickyoung.minecraft.ribbits.network.ToggleSupporterHatC2SPacket;
+import com.yungnickyoung.minecraft.ribbits.network.ToggleSupporterHatS2CPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -68,6 +71,24 @@ public class NetworkModuleForge {
                     .decoder(PlayerMusicStopS2CPacket::new)
                     .encoder(PlayerMusicStopS2CPacket::toBytes)
                     .consumerMainThread(PlayerMusicStopS2CPacket::handle)
+                    .add();
+
+            INSTANCE.messageBuilder(ToggleSupporterHatC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                    .decoder(ToggleSupporterHatC2SPacket::new)
+                    .encoder(ToggleSupporterHatC2SPacket::toBytes)
+                    .consumerMainThread(ToggleSupporterHatC2SPacket::handle)
+                    .add();
+
+            INSTANCE.messageBuilder(ToggleSupporterHatS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                    .decoder(ToggleSupporterHatS2CPacket::new)
+                    .encoder(ToggleSupporterHatS2CPacket::toBytes)
+                    .consumerMainThread(ToggleSupporterHatS2CPacket::handle)
+                    .add();
+
+            INSTANCE.messageBuilder(RequestSupporterHatStateS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                    .decoder(RequestSupporterHatStateS2CPacket::new)
+                    .encoder(RequestSupporterHatStateS2CPacket::toBytes)
+                    .consumerMainThread(RequestSupporterHatStateS2CPacket::handle)
                     .add();
         });
     }

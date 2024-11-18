@@ -11,7 +11,7 @@ import java.util.UUID;
 
 /**
  * Packet sent from the server to the client to request the given client's supporter hat state.
- * Includes a list of all players with the supporter hat enabled on the server.
+ * Includes a list of all players with the supporter hat enabled on the server, to keep the client in sync.
  * @param enabledSupporterHatPlayers A list of UUIDs of players on the server with the supporter hat enabled
  */
 public record RequestSupporterHatStatePacket(List<UUID> enabledSupporterHatPlayers) implements FabricPacket {

@@ -3,7 +3,7 @@ package com.yungnickyoung.minecraft.ribbits;
 import com.yungnickyoung.minecraft.ribbits.item.RibbitSpawnEggDispenseItemBehaviorFabric;
 import com.yungnickyoung.minecraft.ribbits.module.ItemModule;
 import com.yungnickyoung.minecraft.ribbits.player.PlayerInstrumentTracker;
-import com.yungnickyoung.minecraft.ribbits.supporters.SupporterEvents;
+import com.yungnickyoung.minecraft.ribbits.supporters.SupporterEventsFabric;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -27,6 +27,6 @@ public class RibbitsFabric implements ModInitializer {
 
         // Events
         ServerTickEvents.START_SERVER_TICK.register(server -> PlayerInstrumentTracker.onServerTick());
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> SupporterEvents.onPlayerJoin(sender));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> SupporterEventsFabric.onPlayerJoin(sender));
     }
 }

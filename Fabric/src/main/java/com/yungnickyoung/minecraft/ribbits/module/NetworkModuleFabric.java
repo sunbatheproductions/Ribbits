@@ -25,9 +25,12 @@ public class NetworkModuleFabric {
         ClientPlayNetworking.registerGlobalReceiver(RIBBIT_STOP_MUSIC_S2C, ClientPacketHandlerFabric::receiveStop);
         ClientPlayNetworking.registerGlobalReceiver(START_HEARING_MARACA_S2C, ClientPacketHandlerFabric::receiveStartMaraca);
         ClientPlayNetworking.registerGlobalReceiver(STOP_HEARING_MARACA_S2C, ClientPacketHandlerFabric::receiveStopMaraca);
-        ClientPlayNetworking.registerGlobalReceiver(ToggleSupporterPacket.TYPE, ClientPacketHandlerFabric::receiveToggleSupporterHat);
         ClientPlayNetworking.registerGlobalReceiver(RequestSupporterHatStatePacket.TYPE, ClientPacketHandlerFabric::receiveSupporterHatStateRequest);
 
+        // ToggleSupporterPacket is registered in both the client and server packet handlers.
+        // When received on the server, it will update the server's SupportersListServer and forward the packet to all clients.
+        // When received on the client, it will update the player's local SupportersListClient.
+        ClientPlayNetworking.registerGlobalReceiver(ToggleSupporterPacket.TYPE, ClientPacketHandlerFabric::receiveToggleSupporterHat);
         ServerPlayNetworking.registerGlobalReceiver(ToggleSupporterPacket.TYPE, ServerPacketHandlerFabric::receiveToggleSupporterHat);
     }
 }

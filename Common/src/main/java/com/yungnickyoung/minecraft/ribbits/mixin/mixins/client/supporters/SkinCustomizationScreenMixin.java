@@ -1,6 +1,5 @@
 package com.yungnickyoung.minecraft.ribbits.mixin.mixins.client.supporters;
 
-import com.yungnickyoung.minecraft.ribbits.client.RibbitsCommonClient;
 import com.yungnickyoung.minecraft.ribbits.client.supporters.RibbitOptionsJSON;
 import com.yungnickyoung.minecraft.ribbits.client.supporters.SupportersJSON;
 import com.yungnickyoung.minecraft.ribbits.services.Services;

@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import java.util.List;
 import java.util.UUID;
 
-public class SupporterEvents {
+public class SupporterEventsFabric {
     public static void onPlayerJoin(PacketSender sender) {
         // Get the server's current list of players with the supporter hat enabled
         List<UUID> playersWithSupporterHat = SupportersListServer.getPlayersWithSupporterHat().stream().toList();
