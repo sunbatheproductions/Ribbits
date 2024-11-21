@@ -15,6 +15,7 @@
     "client.music.ChannelMixin",
     "client.music.SoundEngineMixin",
     "client.music.SoundManagerMixin",
+    "client.supporters.HumanoidArmorLayerMixin",
     "client.supporters.PlayerRendererMixin",
     "client.supporters.SkinCustomizationScreenMixin"
   ],

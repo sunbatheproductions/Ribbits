@@ -29,12 +29,8 @@ public class SupporterHatRenderer extends RenderLayer<AbstractClientPlayer, Play
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLight, AbstractClientPlayer player, float f, float g, float tickDelta, float j, float k, float l) {
         if (SupportersListClient.isPlayerSupporterHatEnabled(player.getUUID())) {
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(TEXTURE));
-            PlayerModel<AbstractClientPlayer> parentModel = getParentModel();
-//            hatModel.head.copyFrom(parentModel.head);
-            hatModel.head.y = parentModel.head.y - 0.6f;
+            hatModel.head.y = this.getParentModel().head.y - 0.6f;
             this.getParentModel().getHead().translateAndRotate(stack);
-//            this.getParentModel().copyPropertiesTo(hatModel);
-//            hatModel.head.y -= 0.6f;
             hatModel.renderToBuffer(stack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         }
     }
