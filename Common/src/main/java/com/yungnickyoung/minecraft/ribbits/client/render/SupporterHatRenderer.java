@@ -18,20 +18,24 @@ import net.minecraft.resources.ResourceLocation;
 public class SupporterHatRenderer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
     private static final ResourceLocation TEXTURE = RibbitsCommon.id("textures/entity/player/supporter_hat.png");
 
-    private final SupporterHatModel armorModel;
+    private final SupporterHatModel hatModel;
 
     public SupporterHatRenderer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> renderLayerParent, Context context) {
         super(renderLayerParent);
-        this.armorModel = new SupporterHatModel(context.bakeLayer(SupporterHatModel.LAYER_LOCATION));
+        this.hatModel = new SupporterHatModel(context.bakeLayer(SupporterHatModel.LAYER_LOCATION));
     }
 
     @Override
-    public void render(PoseStack stack, MultiBufferSource bufferSource, int i, AbstractClientPlayer player, float f, float g, float tickDelta, float j, float k, float l) {
+    public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLight, AbstractClientPlayer player, float f, float g, float tickDelta, float j, float k, float l) {
         if (SupportersListClient.isPlayerSupporterHatEnabled(player.getUUID())) {
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(TEXTURE));
-            armorModel.head.copyFrom(this.getParentModel().head);
-            armorModel.head.y -= .5f;
-            armorModel.renderToBuffer(stack, consumer, i, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            PlayerModel<AbstractClientPlayer> parentModel = getParentModel();
+//            hatModel.head.copyFrom(parentModel.head);
+            hatModel.head.y = parentModel.head.y - 0.6f;
+            this.getParentModel().getHead().translateAndRotate(stack);
+//            this.getParentModel().copyPropertiesTo(hatModel);
+//            hatModel.head.y -= 0.6f;
+            hatModel.renderToBuffer(stack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         }
     }
 }
